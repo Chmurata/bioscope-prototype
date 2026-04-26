@@ -107,30 +107,49 @@ export default function PlayerScreen() {
     onDoubleTap: handleDoubleTap,
   });
 
+  // Shared episode-nav logic — used by swipe (drag) and keyboard arrows.
+  // Every 3rd advance shows a full-page ad before moving to the next episode.
+  const goNextEpisode = useCallback(() => {
+    if (!selectedDrama || currentEpisode >= selectedDrama.totalEpisodes) return;
+    const nextCount = swipeCount + 1;
+    setSwipeCount(nextCount);
+    if (nextCount % 3 === 0) {
+      const ad = fullPageAds[(nextCount / 3 - 1) % fullPageAds.length];
+      setActiveFullAd({ ad, pendingEpisode: currentEpisode + 1 });
+      setIsPlaying(false);
+    } else {
+      playEpisode(currentEpisode + 1);
+    }
+  }, [selectedDrama, currentEpisode, playEpisode, swipeCount, setIsPlaying]);
+
+  const goPrevEpisode = useCallback(() => {
+    if (currentEpisode > 1) playEpisode(currentEpisode - 1);
+  }, [currentEpisode, playEpisode]);
+
   // Swipe up → next episode, swipe down → previous (within same drama)
-  // Every 3rd swipe-up shows a full-page ad before advancing.
   const handleDragEnd = useCallback((_event, info) => {
     const dy = info.offset.y;
     const vy = info.velocity.y;
-
     const crossedUp = dy < -SWIPE_THRESHOLD || vy < -SWIPE_VELOCITY;
     const crossedDown = dy > SWIPE_THRESHOLD || vy > SWIPE_VELOCITY;
+    if (crossedUp) goNextEpisode();
+    else if (crossedDown) goPrevEpisode();
+  }, [goNextEpisode, goPrevEpisode]);
 
-    if (crossedUp && selectedDrama && currentEpisode < selectedDrama.totalEpisodes) {
-      const nextCount = swipeCount + 1;
-      setSwipeCount(nextCount);
-      // Every 3rd swipe-up interposes a full-page ad
-      if (nextCount % 3 === 0) {
-        const ad = fullPageAds[(nextCount / 3 - 1) % fullPageAds.length];
-        setActiveFullAd({ ad, pendingEpisode: currentEpisode + 1 });
-        setIsPlaying(false);
-      } else {
-        playEpisode(currentEpisode + 1);
-      }
-    } else if (crossedDown && currentEpisode > 1) {
-      playEpisode(currentEpisode - 1);
-    }
-  }, [selectedDrama, currentEpisode, playEpisode, swipeCount, setIsPlaying]);
+  // Arrow Up → next episode, Arrow Down → previous. Skips when modals are open
+  // (episode selector / full-page ad / settings) or when typing in an input.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      e.preventDefault();
+      if (e.key === 'ArrowUp') goNextEpisode();
+      else goPrevEpisode();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goNextEpisode, goPrevEpisode]);
 
   const handleFullAdDismiss = useCallback(() => {
     if (activeFullAd?.pendingEpisode) {
