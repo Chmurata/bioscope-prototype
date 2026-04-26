@@ -172,12 +172,16 @@ export default function SubscribeSheet({ open, onClose }) {
                       {PAYMENT_PREVIEW.map((p, i) => (
                         <div
                           key={i}
-                          className="h-[22px] min-w-[34px] px-1.5 rounded-[3px] flex items-center justify-center shrink-0"
+                          className="h-[22px] min-w-[34px] px-1.5 rounded-[3px] flex items-center justify-center shrink-0 overflow-hidden"
                           style={{ background: p.bg }}
                         >
-                          <span className="font-bold leading-none" style={{ color: p.color, fontSize: p.size }}>
-                            {p.wordmark}
-                          </span>
+                          {p.logo ? (
+                            <img src={p.logo} alt="" className="max-w-full max-h-full object-contain" />
+                          ) : (
+                            <span className="font-bold leading-none" style={{ color: p.color, fontSize: p.size }}>
+                              {p.wordmark}
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>
