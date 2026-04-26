@@ -56,7 +56,7 @@ function SynopsisBlock({ drama }) {
       {expanded && rows.map((r) => (
         <DetailRow key={r.label} label={r.label} values={r.values} linked={r.linked} />
       ))}
-      <div className="flex justify-center">
+      <div>
         <button
           onClick={() => setExpanded((e) => !e)}
           className="inline-flex items-center gap-1 cursor-pointer mt-1"
