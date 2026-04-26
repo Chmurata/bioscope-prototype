@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #111618;
+  --color-surface: #1a1d2e;
+  --color-card: #262b30;
+  --color-card-hover: #2e3338;
+  /* Bioscope brand: teal B300-B500 */
+  --color-brand: #2b9c9c;
+  --color-brand-light: #46ffff;
+  --color-brand-mid: #31b3b3;
+
+  /* Bioscope secondary: blue S200-S400 */
+  --color-accent: #4664f5;
+  --color-accent-light: #657ef7;
+
+  /* Badge colors — derived from brand palette */
+  --color-badge-completed: #2b9c9c;
+  --color-badge-new: #4664f5;
+  --color-badge-ongoing: #b39331;
+  --color-white: #ffffff;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #bfbfbf;
+  --color-text-muted: #808080;
+  --color-text-dim: #555555;
+  --color-border: #2e3338;
+  --color-sheet: #1a1b1f;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --color-pill-active: #ffffff;
+  --color-pill-inactive: #262b30;
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: #1a1a1a;
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+/* Hide scrollbar but keep scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Equalizer animation for "now playing" episode */
+@keyframes eq-bar-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 14px; }
+}
+@keyframes eq-bar-2 {
+  0%, 100% { height: 8px; }
+  50% { height: 4px; }
+}
+@keyframes eq-bar-3 {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+
+.eq-bar-1 { animation: eq-bar-1 0.6s ease-in-out infinite; }
+.eq-bar-2 { animation: eq-bar-2 0.5s ease-in-out infinite 0.1s; }
+.eq-bar-3 { animation: eq-bar-3 0.7s ease-in-out infinite 0.2s; }
+
+/* Wave equalizer — 5 bars with staggered delays for a traveling wave */
+@keyframes wave-bar {
+  0%, 100% { height: 3px; }
+  50% { height: 14px; }
+}
+.wave-bar-1 { animation: wave-bar 0.9s ease-in-out infinite; }
+.wave-bar-2 { animation: wave-bar 0.9s ease-in-out infinite 0.1s; }
+.wave-bar-3 { animation: wave-bar 0.9s ease-in-out infinite 0.2s; }
+.wave-bar-4 { animation: wave-bar 0.9s ease-in-out infinite 0.3s; }
+.wave-bar-5 { animation: wave-bar 0.9s ease-in-out infinite 0.4s; }
+
+/* Pulsing ring for active episode dot */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.25); opacity: 0; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+
+/* Countdown ring animation */
+@keyframes countdown-ring {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 157; }
+}
+
+/* Subtitle fade */
+@keyframes subtitle-fade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Seekbar progress */
+@keyframes seekbar-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
