@@ -13,9 +13,7 @@ export const PAYMENT_METHODS = [
     id: 'rocket',
     name: 'Rocket',
     tileBg: '#FFFFFF',
-    wordmark: 'ROCKET',
-    wordmarkColor: '#8E2D91',
-    wordmarkSize: 8,
+    logo: PAYMENT_LOGOS.rocket,
   },
   {
     id: 'nagad',
@@ -33,9 +31,7 @@ export const PAYMENT_METHODS = [
     id: 'upay',
     name: 'upay',
     tileBg: '#FFFFFF',
-    wordmark: 'upay',
-    wordmarkColor: '#F5B71B',
-    wordmarkSize: 11,
+    logo: PAYMENT_LOGOS.upay,
   },
 ];
 
