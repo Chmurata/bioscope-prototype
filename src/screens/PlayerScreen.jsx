@@ -199,7 +199,7 @@ export default function PlayerScreen() {
             <div className="flex items-center gap-3">
               <button
                 onClick={cycleSpeed}
-                className="flex items-center gap-1 bg-white/15 rounded-[12px] px-2 py-1 cursor-pointer"
+                className="flex items-center gap-1 bg-black/45 backdrop-blur-md ring-1 ring-white/10 rounded-[12px] px-2 py-1 cursor-pointer"
                 aria-label="Cycle playback speed"
               >
                 <FastForward size={12} className="text-white" />
@@ -247,7 +247,7 @@ export default function PlayerScreen() {
             <div className="flex items-center gap-3">
               <button
                 onClick={cycleSpeed}
-                className="flex items-center gap-1 bg-white/15 rounded-[12px] px-2 py-1 cursor-pointer"
+                className="flex items-center gap-1 bg-black/45 backdrop-blur-md ring-1 ring-white/10 rounded-[12px] px-2 py-1 cursor-pointer"
                 aria-label="Cycle playback speed"
               >
                 <FastForward size={11} className="text-white" />
@@ -339,7 +339,7 @@ export default function PlayerScreen() {
             <motion.div
               initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.2, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="w-[56px] h-[56px] rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+              className="w-[56px] h-[56px] rounded-full bg-black/45 ring-1 ring-white/15 flex items-center justify-center backdrop-blur-md">
               {isPlaying ? <Pause size={24} className="text-white" fill="white" /> : <Play size={24} className="text-white ml-1" fill="white" />}
             </motion.div>
           )}

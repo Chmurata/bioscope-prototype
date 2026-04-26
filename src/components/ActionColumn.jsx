@@ -47,7 +47,7 @@ export default function ActionColumn() {
             onClick={action.onTap}
             className="flex flex-col items-center gap-1 cursor-pointer"
           >
-            <div className="w-[36px] h-[36px] rounded-full bg-white/12 flex items-center justify-center">
+            <div className="w-[36px] h-[36px] rounded-full bg-black/45 backdrop-blur-md ring-1 ring-white/10 flex items-center justify-center">
               <Icon
                 size={20}
                 className="text-white"

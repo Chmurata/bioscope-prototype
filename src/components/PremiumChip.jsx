@@ -10,7 +10,7 @@ export default function PremiumChip({ onClick }) {
     <motion.button
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className="relative overflow-hidden inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 cursor-pointer bg-white/10 backdrop-blur-md ring-1 ring-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
+      className="relative overflow-hidden inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 cursor-pointer bg-black/50 backdrop-blur-md ring-1 ring-amber-300/30 shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
     >
       {/* Shine sweep */}
       <motion.span
