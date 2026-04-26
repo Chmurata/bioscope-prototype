@@ -1,6 +1,5 @@
 import bioscopeLogo from '../../assets/bioscope-logo.svg';
-import crownIcon from '../../assets/crown.svg';
-import { Search } from 'lucide-react';
+import { Search, Crown } from 'lucide-react';
 
 // Sticky top bar for the home screen.
 // Background gradient blends from the current hero's tint color at the top to transparent below,
@@ -26,9 +25,10 @@ export default function HeroTopBar({ tint = '#3a2c2c', onSubscribe, onSearch }) 
           <button
             onClick={onSubscribe}
             className="flex items-center gap-1.5 bg-[#FFCF60] rounded-[10px] px-3 py-1.5 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+            style={{ color: 'hsl(23 88% 20%)' }}
           >
-            <img src={crownIcon} alt="" className="w-[18px] h-[18px]" />
-            <span className="text-[14px] font-semibold text-[#2a2a2a] leading-none">Subscribe</span>
+            <Crown size={16} fill="currentColor" strokeWidth={1.75} />
+            <span className="text-[14px] font-semibold leading-none">Subscribe</span>
           </button>
         </div>
       </div>

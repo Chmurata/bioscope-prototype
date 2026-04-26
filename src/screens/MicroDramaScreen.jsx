@@ -3,7 +3,7 @@ import { useApp } from '../contexts/AppContext';
 import { dramas } from '../data/dramas';
 import { PremiumBadge } from '../components/PremiumBadge';
 import { ContentLabel } from '../components/ContentLabel';
-import { ArrowLeft, Play, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Play } from 'lucide-react';
 
 function formatTimeLeft(total, watched) {
   const remaining = Math.max(0, total - watched);
@@ -13,20 +13,10 @@ function formatTimeLeft(total, watched) {
   return `${s}s left`;
 }
 
-function SeeAllButton() {
-  return (
-    <div className="flex items-center gap-1 border border-[#3a3f44] rounded-full px-2.5 py-1">
-      <span className="text-[12px] text-text-secondary">See all</span>
-      <ChevronRight size={12} className="text-text-secondary" />
-    </div>
-  );
-}
-
-function SectionTitle({ title, onSeeAll }) {
+function SectionTitle({ title }) {
   return (
     <div className="flex items-center justify-between mb-2">
       <span className="text-[18px] font-bold text-white">{title}</span>
-      <button onClick={onSeeAll} className="cursor-pointer"><SeeAllButton /></button>
     </div>
   );
 }

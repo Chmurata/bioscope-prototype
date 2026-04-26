@@ -15,9 +15,14 @@ import vuutSasuri           from './vuut-sasuri.webp';
 import bakBakum             from './bak-bakum.webp';
 import nikosh               from './nikosh.webp';
 import storeRoom            from './store-room.webp';
+import konoEkBosonto        from './kono-ek-bosonto.webp';
+import dostorkhanerIftar    from './dostorkhaner-iftar.webp';
+import shohoreOnekRodh      from './shohore-onek-rodh.webp';
+import unoSir               from './uno-sir.webp';
 
 export const MICRODRAMA = {
   iconman, bivabori, criminal, buddies, survive, choddobeshiValobasha,
   recoveryMan, oshomaptoShomporko, poison, ondhokarShohor, shahoshika,
   shahoshika2, vuutSasuri, bakBakum, nikosh, storeRoom,
+  konoEkBosonto, dostorkhanerIftar, shohoreOnekRodh, unoSir,
 };

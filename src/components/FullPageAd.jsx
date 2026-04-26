@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThumbsUp, MessageCircle, Share2, Bookmark, MoreHorizontal, ChevronDown, Search, User, Megaphone, X } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Share2, Bookmark, MoreHorizontal, Megaphone, X } from 'lucide-react';
 
 /**
  * Full-page ad — FB Reels sponsored-ad layout.
@@ -12,9 +12,13 @@ import { ThumbsUp, MessageCircle, Share2, Bookmark, MoreHorizontal, ChevronDown,
  */
 export default function FullPageAd({ ad, onDismiss, autoAdvanceMs = 5000 }) {
   const [remaining, setRemaining] = useState(autoAdvanceMs);
+  // Tracks which direction to exit toward — set by drag end or auto-advance.
+  // 'up' means user swiped up (ad slides up out); 'down' means swiped down.
+  const [exitDirection, setExitDirection] = useState('up');
 
   useEffect(() => {
     if (!ad) return;
+    setExitDirection('up');
     const start = Date.now();
     const tick = setInterval(() => {
       const elapsed = Date.now() - start;
@@ -36,36 +40,32 @@ export default function FullPageAd({ ad, onDismiss, autoAdvanceMs = 5000 }) {
           className="absolute inset-0 z-[45] bg-black"
           initial={{ opacity: 0, y: '100%' }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: '100%' }}
+          exit={{ opacity: 0, y: exitDirection === 'down' ? '100%' : '-100%' }}
           transition={{ type: 'spring', damping: 30, stiffness: 250 }}
           drag="y"
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0.4}
           onDragEnd={(_e, info) => {
-            if (Math.abs(info.offset.y) > 80 || Math.abs(info.velocity.y) > 400) onDismiss?.();
+            const passedThreshold = Math.abs(info.offset.y) > 80 || Math.abs(info.velocity.y) > 400;
+            if (!passedThreshold) return;
+            // Negative offset = dragged up → exit upward; positive = dragged down → exit downward
+            setExitDirection(info.offset.y < 0 ? 'up' : 'down');
+            onDismiss?.();
           }}
         >
           {/* Background creative */}
           <img src={ad.image} alt="" className="absolute inset-0 w-full h-full object-cover opacity-95" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
 
-          {/* Top bar — Reels-ish + skip */}
-          <div className="absolute top-[36px] left-0 right-0 z-10 flex items-center justify-between px-4">
-            <div className="flex items-center gap-2 text-white">
-              <ChevronDown size={18} />
-              <span className="text-[15px] font-bold">Reels</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Search size={18} className="text-white" />
-              <User size={18} className="text-white" />
-              <button
-                onClick={onDismiss}
-                className="ml-1 w-[26px] h-[26px] rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center cursor-pointer"
-                aria-label="Skip ad"
-              >
-                <X size={14} className="text-white" />
-              </button>
-            </div>
+          {/* Top bar — skip-ad button only (Facebook Reels-style chrome removed) */}
+          <div className="absolute top-[36px] right-4 z-10">
+            <button
+              onClick={onDismiss}
+              className="w-[26px] h-[26px] rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center cursor-pointer"
+              aria-label="Skip ad"
+            >
+              <X size={14} className="text-white" />
+            </button>
           </div>
 
           {/* Title pill */}

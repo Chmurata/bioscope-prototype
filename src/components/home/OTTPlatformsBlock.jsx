@@ -14,11 +14,10 @@ export default function OTTPlatformsBlock({ title, platforms, cards, onBrowse })
         <h3 className="text-[18px] font-bold text-white leading-none">{title}</h3>
       </div>
 
-      {/* Platform tabs */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 mb-3">
+      {/* Platform tabs — overflow-y-visible so the active ring + tall white tile don't clip */}
+      <div className="flex gap-2 overflow-x-auto overflow-y-visible no-scrollbar px-4 mb-3 py-1">
         {platforms.map((p) => {
           const isActive = p.id === active;
-          const bgStyle = p.logoBg.startsWith('linear-gradient') ? { backgroundImage: p.logoBg } : { background: p.logoBg };
           return (
             <button
               key={p.id}
@@ -27,23 +26,29 @@ export default function OTTPlatformsBlock({ title, platforms, cards, onBrowse })
                 isActive ? 'bg-white/8 ring-1 ring-white/50' : 'bg-transparent'
               }`}
             >
-              <div
-                className="w-[22px] h-[22px] rounded-[4px] flex items-center justify-center"
-                style={bgStyle}
-              >
-                <span className="font-bold leading-none whitespace-pre text-center" style={{ color: p.logoColor, fontSize: p.fs }}>{p.logoText}</span>
+              <div className="w-[22px] h-[22px] rounded-[4px] overflow-hidden bg-white shrink-0">
+                {p.logo ? (
+                  <img src={p.logo} alt={p.name} className="w-full h-full object-cover" />
+                ) : (
+                  <span
+                    className="w-full h-full flex items-center justify-center font-bold leading-none whitespace-pre text-center"
+                    style={{ color: p.logoColor, fontSize: p.fs, background: p.logoBg }}
+                  >
+                    {p.logoText}
+                  </span>
+                )}
               </div>
-              <span className="text-[14px] font-semibold text-white">{p.name}</span>
+              <span className="text-[14px] font-semibold text-white whitespace-nowrap">{p.name}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Landscape cards */}
-      <div className="flex gap-3 overflow-x-auto no-scrollbar px-4">
+      {/* Portrait poster cards — matches the rest of the home feed and fits real Bioscope artwork */}
+      <div className="flex gap-3 overflow-x-auto overflow-y-visible no-scrollbar px-4">
         {cards.map((c) => (
-          <div key={c.id} className="shrink-0 relative rounded-[10px] overflow-hidden bg-[#1E2224]" style={{ width: 260, height: 146 }}>
-            <img src={c.landscape ?? c.poster} alt="" className="w-full h-full object-cover" />
+          <div key={c.id} className="shrink-0 relative rounded-[10px] overflow-hidden bg-[#1E2224]" style={{ width: 130, height: 184 }}>
+            <img src={c.poster} alt="" className="w-full h-full object-cover" />
             {c.chip && <ContentLabel label={c.chip} position="tr" />}
           </div>
         ))}

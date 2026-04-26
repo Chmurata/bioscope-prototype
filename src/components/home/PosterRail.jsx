@@ -1,33 +1,42 @@
 import SectionHeader from './SectionHeader';
 import { ContentLabel } from '../ContentLabel';
+import { OTT_LOGOS } from '../../assets/ott-logos';
 
-// Platform mini-logo renderer — small rounded square top-left of each card.
-// Keys map loosely to known OTT wordmarks used in the Bioscope home.
-const PLATFORM_STYLES = {
-  iscreen:   { bg: '#BF1F2E', text: 'i',        color: '#FFFFFF', fs: 14 },
-  hoichoi:   { bg: '#E11D48', text: 'h',        color: '#FFFFFF', fs: 13 },
-  chorki:    { bg: 'linear-gradient(135deg,#F08232,#E11D48)', text: 'C', color: '#FFFFFF', fs: 14 },
-  sonyliv:   { bg: '#000000', text: 'SL',       color: '#FFFFFF', fs: 9 },
-  deepto:    { bg: '#0F1623', text: 'দীপ্ত',     color: '#00BBFF', fs: 10 },
-  lionsgate: { bg: '#000000', text: 'LP',       color: '#F5C518', fs: 9 },
+// Platform key → real OTT logo. Replaces the previous CSS text-tile fallbacks.
+const PLATFORM_LOGOS = {
+  iscreen:   OTT_LOGOS.iscreen,
+  hoichoi:   OTT_LOGOS.hoichoi,
+  chorki:    OTT_LOGOS.chorki,
+  sonyliv:   OTT_LOGOS.sonyliv,
+  deepto:    OTT_LOGOS.deepto,
+  lionsgate: OTT_LOGOS.lionsgate,
+  klikk:     OTT_LOGOS.klikk,
+  shemaroo:  OTT_LOGOS.shemaroo,
+  epicon:    OTT_LOGOS.epicOn,
+  docubay:   OTT_LOGOS.docubay,
 };
 
 function PlatformTile({ platform, size = 26 }) {
-  const s = PLATFORM_STYLES[platform];
-  if (!s) return null;
-  const bgStyle = s.bg.startsWith('linear-gradient') ? { backgroundImage: s.bg } : { background: s.bg };
+  const logo = PLATFORM_LOGOS[platform];
+  if (!logo) return null;
   return (
-    <div className="absolute top-2 left-2 z-10 rounded-[6px] flex items-center justify-center" style={{ width: size, height: size, ...bgStyle }}>
-      <span className="font-bold leading-none whitespace-pre text-center" style={{ color: s.color, fontSize: s.fs }}>{s.text}</span>
+    <div className="absolute top-2 left-2 z-10 rounded-[6px] overflow-hidden bg-white" style={{ width: size, height: size }}>
+      <img src={logo} alt="" className="w-full h-full object-cover" />
     </div>
   );
 }
 
+// Bottom-corner chip — same size/shape as the top "Exclusive" badge, but uses
+// the live Bioscope label color (--label-start / --label-end resolve to the same
+// hsl, so it's a flat blue rather than a gradient).
 function BottomLabel({ label }) {
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-[#00BBFF] px-2 py-1">
-      <span className="text-[10px] font-bold text-white">{label}</span>
-    </div>
+    <span
+      className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-10 px-2 py-[4px] rounded-[3px] text-[9.5px] font-semibold tracking-wide leading-none text-white whitespace-nowrap"
+      style={{ backgroundColor: 'hsl(229.71 89.74% 61.76%)' }}
+    >
+      {label}
+    </span>
   );
 }
 

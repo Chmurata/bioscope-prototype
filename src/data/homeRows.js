@@ -1,4 +1,7 @@
 import { POSTERS } from '../assets/posters';
+import { OTT_LOGOS } from '../assets/ott-logos';
+import { LIVETV } from '../assets/livetv';
+import { MICRODRAMA } from '../assets/microdrama';
 
 // Human title for each content poster — keeps card labels consistent across rails.
 // Excludes the 3 banner-background assets (khan, mnemonic, takay18), which are
@@ -62,10 +65,9 @@ export const homeRows = [
     title: 'Breaking News',
     seeAll: true,
     items: [
-      { id: 'bn-1', title: 'Breaking News', poster: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '09.00 AM | 22-04-2026' },
-      { id: 'bn-2', title: 'Breaking News', poster: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '07.00 AM | 22-04-2026' },
+      { id: 'bn-1', title: 'Breaking News',   poster: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '09.00 AM | 22-04-2026' },
+      { id: 'bn-2', title: 'Breaking News',   poster: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '07.00 AM | 22-04-2026' },
       { id: 'bn-3', title: 'Morning Bulletin', poster: 'https://images.unsplash.com/photo-1586339949216-35c2747cc36d?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'deepto', overlay: 'সকালের ২১ এপ্রিল' },
-      { id: 'bn-4', title: 'News Bulletin', poster: 'https://images.unsplash.com/photo-1531908482631-48ef745a859b?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'hoichoi', overlay: 'News Bulletin' },
     ],
   },
   {
@@ -74,9 +76,9 @@ export const homeRows = [
     title: 'Recommended For You',
     seeAll: false,
     items: [
-      { id: 'rec-1', title: 'New Ad', poster: POSTERS.adLandscape, bottomLabel: 'Trailer' },
-      { id: 'rec-2', title: 'Coming Soon', poster: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&h=450&fit=crop', bottomLabel: 'Coming Soon' },
-      { id: 'rec-3', title: 'Trailer', poster: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=450&fit=crop', bottomLabel: 'Trailer' },
+      { id: 'rec-1', title: 'Coming Soon',   poster: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&h=450&fit=crop', bottomLabel: 'Coming Soon' },
+      { id: 'rec-2', title: 'Latest Trailer',poster: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=450&fit=crop', bottomLabel: 'Trailer' },
+      { id: 'rec-3', title: 'Up Next',       poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&h=450&fit=crop', bottomLabel: 'Trailer' },
     ],
   },
   {
@@ -125,10 +127,20 @@ export const homeRows = [
     title: 'Live TV',
     seeAll: true,
     items: [
-      { id: 'ch-i',      title: 'Channel I Live',   chip: 'Exclusive', logoBg: '#FFFFFF', logoText: 'CHANNEL\nLIVE', logoColor: '#D32F2F', logoFs: 10 },
-      { id: 'deepto',    title: 'Deepto TV Live',   chip: 'Exclusive', logoBg: '#FFFFFF', logoText: 'দীপ্ত\nLIVE',   logoColor: '#E11D48', logoFs: 14 },
-      { id: 'jazeera',   title: 'Al Jazeera',       chip: 'Exclusive', logoBg: '#FFFFFF', logoText: 'ALJAZEERA',     logoColor: '#C8A357', logoFs: 9 },
-      { id: 'channel24', title: 'Channel 24',       chip: 'Exclusive', logoBg: '#FFFFFF', logoText: '24',            logoColor: '#E11D48', logoFs: 22 },
+      { id: 'channel-i',  title: 'Channel I',  chip: 'Exclusive', logo: LIVETV.channelI },
+      { id: 'deepto-tv',  title: 'Deepto TV',  chip: 'Exclusive', logo: LIVETV.deeptoTv },
+      { id: 'al-jazeera', title: 'Al Jazeera', chip: 'Exclusive', logo: LIVETV.alJazeera },
+      { id: 'ary-news',   title: 'ARY News',   chip: 'Exclusive', logo: LIVETV.aryNews },
+      { id: 'dw',         title: 'DW',         chip: 'Exclusive', logo: LIVETV.dw },
+      { id: 'sitare',     title: 'Sitare',     chip: 'Exclusive', logo: LIVETV.sitare },
+      { id: 'rongeen-tv', title: 'Rongeen TV',                    logo: LIVETV.rongeenTv },
+      { id: 'akaash-atth',title: 'Akaash Aath',                   logo: LIVETV.akaashAtth },
+      { id: 'cnbc',       title: 'CNBC',                          logo: LIVETV.cnbc },
+      { id: 'bloomberg',  title: 'Bloomberg',                     logo: LIVETV.bloomberg },
+      { id: 'srk-tv',     title: 'SRK TV',                        logo: LIVETV.srkTv },
+      { id: 'dangal-tv',  title: 'Dangal TV',                     logo: LIVETV.dangalTv },
+      { id: 'ndtv',       title: 'NDTV',                          logo: LIVETV.ndtv },
+      { id: 'express',    title: 'Express Ent.',                  logo: LIVETV.expressEntertainment },
     ],
   },
   {
@@ -137,10 +149,16 @@ export const homeRows = [
     title: 'Unlimited Entertainment',
     seeAll: false,
     items: [
-      { id: 'sonyliv',  title: 'SONY LIV', chip: 'Exclusive', logoBg: 'linear-gradient(135deg,#0ea5e9,#f59e0b)', logoText: 'SONY\nliv', logoColor: '#FFFFFF', logoFs: 14 },
-      { id: 'chorki',   title: 'Chorki',   chip: 'Exclusive', logoBg: 'linear-gradient(135deg,#E11D48,#F08232)', logoText: 'C',          logoColor: '#FFFFFF', logoFs: 36 },
-      { id: 'hoichoi',  title: 'hoichoi',  chip: 'Exclusive', logoBg: '#E11D48', logoText: 'hoichoi',            logoColor: '#FFFFFF', logoFs: 14 },
-      { id: 'shemaroo', title: 'shemaroo', chip: 'Exclusive', logoBg: '#FFB800', logoText: 'shemaroo\nme',       logoColor: '#6E2E86', logoFs: 11 },
+      { id: 'sonyliv',   title: 'SonyLiv',     chip: 'Exclusive', logo: OTT_LOGOS.sonyliv },
+      { id: 'chorki',    title: 'Chorki',      chip: 'Exclusive', logo: OTT_LOGOS.chorki },
+      { id: 'hoichoi',   title: 'Hoichoi',     chip: 'Exclusive', logo: OTT_LOGOS.hoichoi },
+      { id: 'iscreen',   title: 'iScreen',     chip: 'Exclusive', logo: OTT_LOGOS.iscreen },
+      { id: 'lionsgate', title: 'Lionsgate',   chip: 'Exclusive', logo: OTT_LOGOS.lionsgate },
+      { id: 'epic-on',   title: 'Epic ON',                        logo: OTT_LOGOS.epicOn },
+      { id: 'shemaroo',  title: 'Shemaroo',                       logo: OTT_LOGOS.shemaroo },
+      { id: 'klikk',     title: 'Klikk',                          logo: OTT_LOGOS.klikk },
+      { id: 'docubay',   title: 'Docubay',                        logo: OTT_LOGOS.docubay },
+      { id: 'deepto',    title: 'Deepto',                         logo: OTT_LOGOS.deepto },
     ],
   },
   {
@@ -148,14 +166,19 @@ export const homeRows = [
     variant: 'ott-block',
     title: 'All OTT Platforms',
     platforms: [
-      { id: 'sonyliv', name: 'SonyLiv', logoBg: '#000000', logoText: 'SONY\nliv', logoColor: '#FFFFFF', fs: 8 },
-      { id: 'chorki',  name: 'Chorki',  logoBg: 'linear-gradient(135deg,#E11D48,#F08232)', logoText: 'C',    logoColor: '#FFFFFF', fs: 14 },
-      { id: 'hoichoi', name: 'Hoichoi', logoBg: '#E11D48', logoText: 'h',  logoColor: '#FFFFFF', fs: 14 },
-      { id: 'iscreen', name: 'iScreen', logoBg: '#BF1F2E', logoText: 'i',  logoColor: '#FFFFFF', fs: 14 },
+      { id: 'sonyliv',   name: 'SonyLiv',   logo: OTT_LOGOS.sonyliv },
+      { id: 'chorki',    name: 'Chorki',    logo: OTT_LOGOS.chorki },
+      { id: 'hoichoi',   name: 'Hoichoi',   logo: OTT_LOGOS.hoichoi },
+      { id: 'iscreen',   name: 'iScreen',   logo: OTT_LOGOS.iscreen },
+      { id: 'lionsgate', name: 'Lionsgate', logo: OTT_LOGOS.lionsgate },
+      { id: 'epic-on',   name: 'Epic ON',   logo: OTT_LOGOS.epicOn },
+      { id: 'shemaroo',  name: 'Shemaroo',  logo: OTT_LOGOS.shemaroo },
+      { id: 'klikk',     name: 'Klikk',     logo: OTT_LOGOS.klikk },
     ],
     cards: [
-      { id: 'ott-1', chip: 'Exclusive', landscape: POSTERS.adLandscape },
-      { id: 'ott-2', landscape: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&h=450&fit=crop' },
+      { id: 'ott-1', chip: 'Exclusive', poster: MICRODRAMA.unoSir },
+      { id: 'ott-2', chip: 'Exclusive', poster: MICRODRAMA.dostorkhanerIftar },
+      { id: 'ott-3', chip: 'Exclusive', poster: MICRODRAMA.konoEkBosonto },
     ],
   },
   {
@@ -168,6 +191,18 @@ export const homeRows = [
       card('jazzCity', { _i: 51, platform: 'sonyliv' }),
       card('shaan',    { _i: 52, platform: 'chorki',  bottomLabel: 'Streaming Soon' }),
       card('undekhi',  { _i: 53, platform: 'sonyliv' }),
+    ],
+  },
+  {
+    id: 'bangla-originals',
+    variant: 'portrait',
+    title: 'Bangla Originals',
+    seeAll: true,
+    items: [
+      { id: 'bo-1', title: 'Kono Ek Bosonto Bikel', poster: MICRODRAMA.konoEkBosonto,   platform: 'iscreen', chip: 'Exclusive' },
+      { id: 'bo-2', title: 'Dostorkhaner Iftar',     poster: MICRODRAMA.dostorkhanerIftar, platform: 'hoichoi', chip: 'Exclusive', bottomLabel: 'New Release' },
+      { id: 'bo-3', title: 'Shohore Onek Rodh',      poster: MICRODRAMA.shohoreOnekRodh,    platform: 'chorki',  chip: 'Exclusive' },
+      { id: 'bo-4', title: 'Uno Sir',                poster: MICRODRAMA.unoSir,             platform: 'deepto',  chip: 'Exclusive', bottomLabel: 'New Show' },
     ],
   },
 ];

@@ -30,7 +30,7 @@ export const PLANS = [
     price: 299,
     variant: 'primary',
     posters: [dramas[0]?.poster, dramas[1]?.poster, dramas[2]?.poster].filter(Boolean),
-    ottBrands: ['lionsgate','iscreen','sonyLiv','chorki','hoichoi','shemaroo','epicOn','bongo','deepto','klikk','iscreenAlt'],
+    ottBrands: ['lionsgate','iscreen','sonyLiv','chorki','hoichoi','shemaroo','epicOn','deepto','klikk'],
   },
   {
     id: 'bangla',
@@ -52,7 +52,7 @@ export const PLANS = [
     price: 79,
     variant: 'neutral',
     posters: [dramas[5]?.poster, dramas[6]?.poster, dramas[7]?.poster].filter(Boolean),
-    ottBrands: ['lionsgate','iscreen','sonyLiv','chorki','hoichoi','shemaroo','epicOn','bongo','deepto','klikk'],
+    ottBrands: ['lionsgate','iscreen','sonyLiv','chorki','hoichoi','shemaroo','epicOn','deepto','klikk'],
   },
 ];
 

@@ -23,13 +23,13 @@ const POSITIONS = {
   br: 'bottom-1.5 right-1.5',
 };
 
-export function ContentLabel({ label, position = 'tl', className = '' }) {
+export function ContentLabel({ label, position = 'tr', className = '' }) {
   if (!label) return null;
   const style = LABEL_STYLES[label] ?? 'bg-white/90 text-black';
   const pos = POSITIONS[position] ?? POSITIONS.tl;
   return (
     <span
-      className={`absolute ${pos} px-2 py-[4px] rounded-[3px] text-[9.5px] font-semibold tracking-wide leading-none shadow-[0_1px_4px_rgba(0,0,0,0.3)] ${style} ${className}`}
+      className={`absolute ${pos} px-2 py-[4px] rounded-[3px] text-[9.5px] font-semibold tracking-wide leading-none ${style} ${className}`}
       aria-label={label}
     >
       {label}
