@@ -48,14 +48,14 @@ function SynopsisBlock({ drama }) {
 
   return (
     <div className="mb-5">
-      {expanded && (
-        <>
-          <p className="text-[12px] text-white leading-[18px] mb-4">{drama.synopsis}</p>
-          {rows.map((r) => (
-            <DetailRow key={r.label} label={r.label} values={r.values} linked={r.linked} />
-          ))}
-        </>
-      )}
+      <p
+        className={`text-[12px] text-white leading-[18px] mb-4 ${expanded ? '' : 'line-clamp-3'}`}
+      >
+        {drama.synopsis}
+      </p>
+      {expanded && rows.map((r) => (
+        <DetailRow key={r.label} label={r.label} values={r.values} linked={r.linked} />
+      ))}
       <div className="flex justify-center">
         <button
           onClick={() => setExpanded((e) => !e)}
