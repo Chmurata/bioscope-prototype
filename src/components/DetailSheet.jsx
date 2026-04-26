@@ -129,9 +129,9 @@ function SynopsisContent({ drama, moreLikeThis, onPlay, userState, onSelectDrama
     <div>
       <SynopsisBlock drama={drama} />
       <button onClick={onPlay}
-        className="w-full h-[44px] bg-accent rounded-[8px] flex items-center justify-center gap-2 cursor-pointer">
-        <Play size={14} className="text-white" fill="white" />
-        <span className="text-[14px] font-semibold text-white">
+        className="w-full h-[44px] bg-white rounded-[8px] flex items-center justify-center gap-2 cursor-pointer">
+        <Play size={14} className="text-[#2A2A2A]" fill="#2A2A2A" />
+        <span className="text-[14px] font-semibold text-[#2A2A2A]">
           {userState === 'returning' ? `Continue EP.${drama.currentEpisode || 1}` : 'Play EP.1'}
         </span>
       </button>
@@ -253,9 +253,9 @@ function DetailV3({ drama, moreLikeThis, onClose, onPlay, userState, onSelectDra
         </div>
         {/* Play CTA */}
         <button onClick={onPlay}
-          className="w-full h-[40px] bg-accent rounded-[8px] flex items-center justify-center gap-2 cursor-pointer mt-3">
-          <Play size={13} className="text-white" fill="white" />
-          <span className="text-[13px] font-semibold text-white">
+          className="w-full h-[40px] bg-white rounded-[8px] flex items-center justify-center gap-2 cursor-pointer mt-3">
+          <Play size={13} className="text-[#2A2A2A]" fill="#2A2A2A" />
+          <span className="text-[13px] font-semibold text-[#2A2A2A]">
             {userState === 'returning' ? `Continue EP.${drama.currentEpisode || 1}` : 'Play EP.1'}
           </span>
         </button>
