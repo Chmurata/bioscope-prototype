@@ -1,25 +1,22 @@
 import { useApp } from '../contexts/AppContext';
-import { Home, LayoutGrid, Flame, Tv, User } from 'lucide-react';
+import { Home, Clapperboard, Flame, User } from 'lucide-react';
 
 const navItems = [
-  { icon: Home, label: 'Home', screen: 'home' },
-  { icon: LayoutGrid, label: 'Shorts', screen: 'browse' },
-  { icon: Flame, label: 'New', screen: null },
-  { icon: Tv, label: 'Live TV', screen: null },
-  { icon: User, label: 'Account', screen: null },
+  { icon: Home,         label: 'Home',       screen: 'home' },
+  { icon: Clapperboard, label: 'Microdrama', screen: 'microdrama' },
+  { icon: Flame,        label: 'New',        screen: null },
+  { icon: User,         label: 'Account',    screen: null },
 ];
 
 export default function BottomNavbar() {
   const { screen, setScreen } = useApp();
-
-  const activeScreen = screen === 'browse' ? 'browse' : 'home';
 
   return (
     <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/10 backdrop-blur-[60px]">
       <div className="flex items-center justify-between px-4 h-[56px]"
         style={{ borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
         {navItems.map((item) => {
-          const isActive = item.screen === activeScreen;
+          const isActive = item.screen === screen;
           const Icon = item.icon;
           return (
             <button
