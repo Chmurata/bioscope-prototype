@@ -50,11 +50,11 @@ function MethodRow({ method, selected, highlight, onSelect }) {
     >
       {/* Brand tile */}
       <div
-        className="w-[40px] h-[28px] rounded-[4px] flex items-center justify-center shrink-0 ring-1 ring-black/10 overflow-hidden"
+        className="w-[48px] h-[32px] rounded-[4px] flex items-center justify-center shrink-0 ring-1 ring-black/10 overflow-hidden p-1"
         style={{ background: method.tileBg }}
       >
         {method.logo ? (
-          <img src={method.logo} alt={method.name} className="max-w-[80%] max-h-[80%] object-contain" />
+          <img src={method.logo} alt={method.name} className="w-full h-full object-contain" />
         ) : (
           <span
             className="leading-none font-bold"
