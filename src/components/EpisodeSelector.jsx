@@ -311,7 +311,6 @@ function ThumbnailSelector({ drama, currentEpisode, onSelect, ranges, activeRang
 
 export default function EpisodeSelector() {
   const { selectedDrama, showEpisodeSelector, setShowEpisodeSelector, currentEpisode, playEpisode, variants } = useApp();
-  const [activeTab, setActiveTab] = useState('episodes');
   const [activeRange, setActiveRange] = useState(0);
 
   const ranges = useMemo(() => {
@@ -368,16 +367,6 @@ export default function EpisodeSelector() {
                   className="w-[28px] h-[28px] rounded-full bg-white/10 flex items-center justify-center cursor-pointer flex-shrink-0">
                   <X size={14} className="text-white" />
                 </button>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex gap-6 mb-4">
-                {['story', 'episodes'].map((tab) => (
-                  <button key={tab} onClick={() => setActiveTab(tab)}
-                    className={`pb-1.5 cursor-pointer capitalize text-[14px] ${activeTab === tab ? 'font-semibold text-white border-b-2 border-white' : 'text-text-muted'}`}>
-                    {tab}
-                  </button>
-                ))}
               </div>
 
               {/* Range pills — sticky for V1 and V3 */}

@@ -65,8 +65,7 @@ function SynopsisContent({ drama, moreLikeThis, onPlay, userState, onSelectDrama
           </span>
         ))}
       </div>
-      <p className="text-[12px] text-text-muted leading-[18px] mb-4">{drama.synopsis}</p>
-      <h4 className="text-[13px] font-semibold text-white mb-2">Cast</h4>
+      <p className="text-[12px] text-text-muted leading-[18px] mb-5">{drama.synopsis}</p>
       <div className="flex gap-4 mb-5">
         {drama.cast.map((c) => (
           <div key={c.name} className="flex items-center gap-2">
@@ -85,8 +84,7 @@ function SynopsisContent({ drama, moreLikeThis, onPlay, userState, onSelectDrama
           {userState === 'returning' ? `Continue EP.${drama.currentEpisode || 1}` : 'Play EP.1'}
         </span>
       </button>
-      <h4 className="text-[13px] font-semibold text-white mt-5 mb-3">More Like This</h4>
-      <div className="flex gap-3 overflow-x-auto no-scrollbar">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar mt-5">
         {moreLikeThis.map((d) => (
           <button key={d.id} onClick={() => onSelectDrama?.(d)} className="flex-shrink-0 w-[90px] text-left cursor-pointer">
             <div className="w-[90px] h-[127px] rounded-[6px] overflow-hidden bg-card">
@@ -101,7 +99,7 @@ function SynopsisContent({ drama, moreLikeThis, onPlay, userState, onSelectDrama
 }
 
 // ===== V1: Standard half-sheet =====
-function DetailV1({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPlay, onSelectEp, currentEpisode, userState, onSelectDrama }) {
+function DetailV1({ drama, moreLikeThis, onClose, onPlay, userState, onSelectDrama }) {
   return (
     <motion.div
       className="absolute bottom-0 left-0 right-0 bg-sheet rounded-t-[16px] max-h-[75%] overflow-y-auto no-scrollbar"
@@ -125,25 +123,14 @@ function DetailV1({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPla
             <X size={14} className="text-white" />
           </button>
         </div>
-        {/* Tabs */}
-        <div className="flex gap-6 mb-4">
-          {['story', 'episodes'].map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`pb-1.5 cursor-pointer capitalize text-[14px] ${activeTab === tab ? 'font-semibold text-white border-b-2 border-white' : 'text-text-muted'}`}>
-              {tab}
-            </button>
-          ))}
-        </div>
-        {activeTab === 'story'
-          ? <SynopsisContent drama={drama} moreLikeThis={moreLikeThis} onPlay={onPlay} userState={userState} onSelectDrama={onSelectDrama} />
-          : <EpisodeGrid drama={drama} currentEpisode={currentEpisode} onSelect={onSelectEp} />}
+        <SynopsisContent drama={drama} moreLikeThis={moreLikeThis} onPlay={onPlay} userState={userState} onSelectDrama={onSelectDrama} />
       </div>
     </motion.div>
   );
 }
 
 // ===== V2: Full sheet with blurred poster hero =====
-function DetailV2({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPlay, onSelectEp, currentEpisode, userState, onSelectDrama }) {
+function DetailV2({ drama, moreLikeThis, onClose, onPlay, userState, onSelectDrama }) {
   return (
     <motion.div
       className="absolute bottom-0 left-0 right-0 bg-sheet rounded-t-[16px] max-h-[90%] overflow-y-auto no-scrollbar"
@@ -173,25 +160,14 @@ function DetailV2({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPla
       </div>
 
       <div className="px-5 pt-10 pb-6">
-        {/* Tabs */}
-        <div className="flex gap-6 mb-4">
-          {['story', 'episodes'].map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`pb-1.5 cursor-pointer capitalize text-[14px] ${activeTab === tab ? 'font-semibold text-white border-b-2 border-white' : 'text-text-muted'}`}>
-              {tab}
-            </button>
-          ))}
-        </div>
-        {activeTab === 'story'
-          ? <SynopsisContent drama={drama} moreLikeThis={moreLikeThis} onPlay={onPlay} userState={userState} onSelectDrama={onSelectDrama} />
-          : <EpisodeGrid drama={drama} currentEpisode={currentEpisode} onSelect={onSelectEp} />}
+        <SynopsisContent drama={drama} moreLikeThis={moreLikeThis} onPlay={onPlay} userState={userState} onSelectDrama={onSelectDrama} />
       </div>
     </motion.div>
   );
 }
 
 // ===== V3: Card stack with stacked sections =====
-function DetailV3({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPlay, onSelectEp, currentEpisode, userState, onSelectDrama }) {
+function DetailV3({ drama, moreLikeThis, onClose, onPlay, userState, onSelectDrama }) {
   return (
     <motion.div
       className="absolute bottom-0 left-0 right-0 max-h-[85%] overflow-y-auto no-scrollbar"
@@ -234,12 +210,10 @@ function DetailV3({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPla
         </button>
       </div>
 
-      {/* Card 2: Story */}
+      {/* Card 2: Synopsis + cast */}
       <div className="bg-sheet mx-2 rounded-[14px] p-4 mb-2">
-        <h4 className="text-[12px] font-semibold text-text-muted uppercase tracking-wider mb-2">Story</h4>
         <p className="text-[12px] text-text-secondary leading-[18px]">{drama.synopsis}</p>
-        <h4 className="text-[12px] font-semibold text-text-muted uppercase tracking-wider mt-4 mb-2">Cast</h4>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-4">
           {drama.cast.map((c) => (
             <div key={c.name} className="flex items-center gap-2">
               <div className="w-[24px] h-[24px] rounded-full bg-[#3a3a40]" />
@@ -252,15 +226,8 @@ function DetailV3({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPla
         </div>
       </div>
 
-      {/* Card 3: Episodes */}
-      <div className="bg-sheet mx-2 rounded-[14px] p-4 mb-2">
-        <h4 className="text-[12px] font-semibold text-text-muted uppercase tracking-wider mb-3">Episodes</h4>
-        <EpisodeGrid drama={drama} currentEpisode={currentEpisode} onSelect={onSelectEp} />
-      </div>
-
-      {/* Card 4: More Like This */}
+      {/* Card 3: More Like This */}
       <div className="bg-sheet mx-2 rounded-[14px] p-4 mb-4">
-        <h4 className="text-[12px] font-semibold text-text-muted uppercase tracking-wider mb-3">More Like This</h4>
         <div className="flex gap-3 overflow-x-auto no-scrollbar">
           {moreLikeThis.map((d) => (
             <button key={d.id} onClick={() => onSelectDrama?.(d)} className="flex-shrink-0 w-[80px] text-left cursor-pointer">
@@ -277,8 +244,7 @@ function DetailV3({ drama, moreLikeThis, activeTab, setActiveTab, onClose, onPla
 }
 
 export default function DetailSheet() {
-  const { selectedDrama, setShowDetail, playEpisode, currentEpisode, userState, variants, selectDrama } = useApp();
-  const [activeTab, setActiveTab] = useState('story');
+  const { selectedDrama, setShowDetail, playEpisode, userState, variants, selectDrama } = useApp();
 
   if (!selectedDrama) return null;
 
@@ -287,11 +253,11 @@ export default function DetailSheet() {
 
   const onPlay = () => playEpisode(userState === 'returning' ? (selectedDrama.currentEpisode || 1) : 1);
   const onClose = () => setShowDetail(false);
-  const onSelectDrama = (d) => { selectDrama(d); setActiveTab('story'); };
+  const onSelectDrama = (d) => { selectDrama(d); };
 
   const sharedProps = {
-    drama: selectedDrama, moreLikeThis, activeTab, setActiveTab,
-    onClose, onPlay, onSelectEp: playEpisode, currentEpisode, userState, onSelectDrama,
+    drama: selectedDrama, moreLikeThis,
+    onClose, onPlay, userState, onSelectDrama,
   };
 
   return (

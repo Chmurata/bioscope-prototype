@@ -20,7 +20,7 @@ const DEFAULT_VARIANTS = {
   browse: 'V1',
   detail: 'V1',
   player: 'V1',
-  episodeSelector: 'V1',
+  episodeSelector: 'V2',
 };
 
 export function AppProvider({ children }) {
