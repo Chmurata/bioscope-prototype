@@ -63,7 +63,7 @@ function DotsSelector({ drama, totalEpisodes, currentEpisode, watchedEpisodes, o
   return (
     <div>
       {ranges.length > 1 && (
-        <div className="flex gap-2 pb-3 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 pb-3 overflow-x-auto overflow-y-visible no-scrollbar">
           {ranges.map((r, i) => (
             <button
               key={r.label}
@@ -78,7 +78,7 @@ function DotsSelector({ drama, totalEpisodes, currentEpisode, watchedEpisodes, o
         </div>
       )}
       <p className="text-[11px] text-text-muted mb-3">Scroll to browse episodes. Tap to play.</p>
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 items-center">
+      <div className="flex gap-2 overflow-x-auto overflow-y-visible no-scrollbar py-2 items-center">
         {visibleEps.map((ep) => {
           const isCurrent = ep === currentEpisode;
           const isWatched = watchedEpisodes?.includes(ep);
