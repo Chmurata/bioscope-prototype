@@ -45,10 +45,10 @@ export default function ThemedBlock({ title, themeTitle, themeGradient, bgImage,
           </h3>
           <button
             onClick={onSeeAll}
-            className="flex items-center gap-1.5 bg-black/50 ring-1 ring-white/15 backdrop-blur-sm rounded-[8px] px-3 py-1.5 cursor-pointer"
+            className="flex items-center gap-1 bg-black/50 ring-1 ring-white/15 backdrop-blur-sm rounded-[6px] px-2 py-0.5 cursor-pointer"
           >
-            <span className="text-[12px] font-medium text-white">See all</span>
-            <ArrowRight size={12} className="text-white" strokeWidth={2} />
+            <span className="text-[10px] font-medium text-white">See all</span>
+            <ArrowRight size={10} className="text-white" strokeWidth={2} />
           </button>
         </div>
 

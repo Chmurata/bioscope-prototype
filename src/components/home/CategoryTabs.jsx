@@ -17,12 +17,12 @@ export default function CategoryTabs({ tabs = DEFAULT_TABS, value, onChange }) {
           <button
             key={t}
             onClick={() => set(t)}
-            className={`shrink-0 rounded-[6px] px-3 py-1 cursor-pointer transition-colors ${
+            className={`shrink-0 rounded-full px-2.5 py-0.5 cursor-pointer transition-colors ${
               isActive ? 'bg-white' : 'bg-black/25'
             }`}
           >
             <span
-              className={`text-[12px] leading-none ${
+              className={`text-[11px] leading-none ${
                 isActive ? 'text-[#2a2a2a] font-semibold' : 'text-white font-medium'
               }`}
             >
