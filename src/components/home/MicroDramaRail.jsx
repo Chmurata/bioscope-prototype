@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ChevronRight, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PremiumBadge } from '../PremiumBadge';
 import { ContentLabel } from '../ContentLabel';
 
@@ -10,9 +10,8 @@ export default function MicroDramaRail({ items, onOpenMicroDrama, onPlay }) {
   return (
     <div className="pt-7 pb-2">
       <div className="flex items-center justify-between px-4 mb-3">
-        <button onClick={onOpenMicroDrama} className="flex items-center gap-1 cursor-pointer">
+        <button onClick={onOpenMicroDrama} className="cursor-pointer">
           <span className="text-[18px] font-bold text-white leading-none">Micro Drama</span>
-          <ChevronRight size={18} className="text-white" strokeWidth={2.2} />
         </button>
         <button
           onClick={onOpenMicroDrama}

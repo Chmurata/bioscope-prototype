@@ -24,11 +24,11 @@ export default function HeroTopBar({ tint = '#3a2c2c', onSubscribe, onSearch }) 
           </button>
           <button
             onClick={onSubscribe}
-            className="flex items-center gap-1.5 bg-[#FFCF60] rounded-[10px] px-3 py-1.5 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+            className="flex items-center gap-1 bg-[#FFCF60] rounded-[8px] px-2 py-1.5 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
             style={{ color: 'hsl(23 88% 20%)' }}
           >
-            <Crown size={16} fill="currentColor" strokeWidth={1.75} />
-            <span className="text-[14px] font-semibold leading-none">Subscribe</span>
+            <Crown size={14} fill="currentColor" strokeWidth={1.75} />
+            <span className="text-[12px] font-medium leading-none">Subscribe</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 export default function StatusBar() {
   return (
-    <div className="flex items-center justify-between px-6 h-[30px] bg-transparent relative z-10">
+    <div className="flex items-center justify-between px-6 h-[30px] bg-transparent relative z-10" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))' }}>
       <span className="text-[12px] font-semibold text-white">11:11</span>
       <div className="flex items-center gap-1">
         <svg width="16" height="10" viewBox="0 0 16 10" fill="none">

@@ -17,7 +17,7 @@ export default function CategoryTabs({ tabs = DEFAULT_TABS, value, onChange }) {
           <button
             key={t}
             onClick={() => set(t)}
-            className={`shrink-0 rounded-full px-2.5 py-0.5 cursor-pointer transition-colors ${
+            className={`shrink-0 inline-flex items-center justify-center rounded-full px-3 h-[24px] cursor-pointer transition-colors ${
               isActive ? 'bg-white' : 'bg-black/25'
             }`}
           >

@@ -33,11 +33,11 @@ export default function HomeScreen() {
       <HeroTopBar tint={heroTint} onSubscribe={() => setShowSubscribe(true)} />
 
       <div className="relative w-full h-full overflow-y-auto no-scrollbar pb-[90px]">
-        <div style={{ height: 84 }} />
+        <div style={{ height: 100 }} />
 
         <CategoryTabs />
 
-        <div className="pt-4">
+        <div className="pt-7">
           <HeroCarousel slides={heroSlides} onActiveChange={handleActiveHero} onPlay={handlePlay} />
         </div>
 

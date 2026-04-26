@@ -68,8 +68,10 @@ export default function MicroDramaScreen() {
       />
       <div className="absolute inset-0 z-0 bg-black/40" />
 
-      {/* ===== Sticky header — back button (left) + centered "Micro Drama" title ===== */}
-      <div className="absolute top-0 left-0 right-0 z-20 pt-[30px] bg-gradient-to-b from-[#1b1b1b] to-[#1b1b1b]/80 backdrop-blur-md">
+      {/* ===== Sticky header — back button (left) + centered "Micro Drama" title.
+           Extends from y:0 (under the StatusBar at z-40) so the bar always has a
+           solid dark backdrop and stays legible. ===== */}
+      <div className="absolute top-0 left-0 right-0 z-20 pt-[30px] bg-[#1b1b1b]/95 backdrop-blur-md">
         <div className="relative flex items-center px-4 h-[44px]">
           <button onClick={goBack} className="cursor-pointer z-10" aria-label="Back">
             <ArrowLeft size={22} className="text-white" strokeWidth={2} />

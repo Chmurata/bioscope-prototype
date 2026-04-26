@@ -55,35 +55,43 @@ export default function PosterRail({ title, items, variant = 'portrait', seeAll 
         <SectionHeader title={title} seeAll={seeAll} onSeeAll={onSeeAll} />
       </div>
       <div
-        className="flex gap-3 overflow-x-auto overflow-y-visible no-scrollbar px-4 py-2"
-        style={{ paddingLeft: variant === 'numbered' ? 48 : 16 }}
+        className={`flex overflow-x-auto no-scrollbar px-4 ${variant === 'numbered' ? 'gap-[52px]' : 'gap-3'}`}
+        style={{ paddingLeft: variant === 'numbered' ? 70 : 16 }}
       >
         {items.map((it, i) => (
-          <div key={it.id} className="shrink-0 relative" style={{ width: config.w }}>
-            {variant === 'numbered' && (
-              <span
-                className="absolute -left-[40px] bottom-0 text-[120px] font-black text-white/95 leading-[0.8] pointer-events-none select-none"
-                style={{ textShadow: '2px 0 0 rgba(0,0,0,0.5), -2px 0 0 rgba(0,0,0,0.5)', WebkitTextStroke: '2px rgba(0,0,0,0.55)' }}
-              >
-                {i + 1}
-              </span>
-            )}
-            <div className="relative rounded-[8px] overflow-hidden bg-[#1E2224]" style={{ width: config.w, height: config.h }}>
-              <img src={it.poster} alt="" className="w-full h-full object-cover" />
-              {it.platform && <PlatformTile platform={it.platform} />}
-              {it.chip && <ContentLabel label={it.chip} position="tr" />}
-              {variant === 'landscape' && it.overlay && (
-                <>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 px-2 pb-2">
-                    <div className="bg-[#E11D48] text-white text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 inline-block mb-1">
-                      {it.overlay}
-                    </div>
-                    {it.timestamp && <p className="text-[9px] text-white font-semibold leading-none">{it.timestamp}</p>}
-                  </div>
-                </>
+          <div key={it.id} className="shrink-0" style={{ width: config.w }}>
+            <div className="relative" style={{ width: config.w, height: config.h }}>
+              {variant === 'numbered' && (
+                <span
+                  className="absolute -left-[64px] bottom-0 z-0 text-[110px] font-black leading-[0.85] pointer-events-none select-none"
+                  style={{
+                    color: '#0A090B',
+                    WebkitTextStroke: '1.5px rgba(255,255,255,0.9)',
+                    filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.55))',
+                    fontFamily: 'system-ui, -apple-system, "Helvetica Neue", Arial',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {i + 1}
+                </span>
               )}
-              {it.bottomLabel && !it.overlay && <BottomLabel label={it.bottomLabel} />}
+              <div className="relative z-10 rounded-[8px] overflow-hidden bg-[#1E2224] w-full h-full">
+                <img src={it.poster} alt="" className="w-full h-full object-cover" />
+                {it.platform && <PlatformTile platform={it.platform} />}
+                {it.chip && <ContentLabel label={it.chip} position="tr" />}
+                {variant === 'landscape' && it.overlay && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 px-2 pb-2">
+                      <div className="bg-[#E11D48] text-white text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 inline-block mb-1">
+                        {it.overlay}
+                      </div>
+                      {it.timestamp && <p className="text-[9px] text-white font-semibold leading-none">{it.timestamp}</p>}
+                    </div>
+                  </>
+                )}
+                {it.bottomLabel && !it.overlay && <BottomLabel label={it.bottomLabel} />}
+              </div>
             </div>
             <p className="text-[13px] font-medium text-white mt-2 truncate" style={{ fontSize: config.titleSize }}>{it.title}</p>
           </div>

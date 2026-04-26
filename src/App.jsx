@@ -22,8 +22,9 @@ function ScreenRouter() {
       {/* ===== Shell: Status bar + content + navbar — always mounted ===== */}
       <div className="relative w-full h-full" style={{ visibility: isPlayer ? 'hidden' : 'visible' }}>
 
-        {/* Status bar — static, z-20 so it floats above content */}
-        <div className="absolute top-0 left-0 right-0 z-20">
+        {/* Status bar — z-40 so it always floats above any screen-level chrome
+            (HomeScreen's hero gradient, MicroDrama header, etc.) */}
+        <div className="absolute top-0 left-0 right-0 z-40">
           <StatusBar />
         </div>
 
