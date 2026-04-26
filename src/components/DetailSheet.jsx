@@ -2,7 +2,76 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
 import { dramas } from '../data/dramas';
-import { X, ChevronRight, Play, Eye, Clock } from 'lucide-react';
+import { X, ChevronRight, ChevronDown, ChevronUp, Play, Eye, Clock } from 'lucide-react';
+
+// Bioscope app uses a teal accent for the See more / See less toggle.
+const ACCENT = '#46ffff';
+
+// Build the structured detail rows shown when the synopsis is expanded.
+// Genres + Casts come from the drama record; the rest are placeholders so the
+// prototype mirrors the production layout 1:1 across every drama.
+function buildDetailRows(drama) {
+  const castNames = (drama.cast ?? []).map((c) => c.name);
+  return [
+    { label: 'Genres', values: drama.genres ?? [], linked: true },
+    { label: 'Content-providers', values: [drama.contentProvider ?? 'Hoichoi'], linked: true },
+    { label: 'Directors', values: drama.directors ?? ['Mainak Bhaumik'], linked: true },
+    { label: 'Casts', values: castNames, linked: true },
+    { label: 'Producers', values: drama.producers ?? ['Nandy Movies'], linked: true },
+    { label: 'Runtime', values: [drama.runtime ?? `${drama.totalEpisodes ? drama.totalEpisodes * 2 + ' min total' : '2hr'}`] },
+    { label: 'Release Date', values: [drama.releaseDate ?? '2025-01-01'] },
+    { label: 'Maturity Rating', values: [drama.maturityRating ?? (drama.isPremium ? 'Adults Only' : '13+')] },
+  ].filter((row) => row.values.length > 0);
+}
+
+function DetailRow({ label, values, linked }) {
+  return (
+    <div className="flex gap-2 mb-3">
+      <span className="text-[12px] text-text-muted shrink-0">{label}:</span>
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        {values.map((v, i) => (
+          <span
+            key={`${v}-${i}`}
+            className={`text-[12px] text-white ${linked ? 'underline underline-offset-2 decoration-white/40' : ''}`}
+          >
+            {v}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SynopsisBlock({ drama }) {
+  const [expanded, setExpanded] = useState(true);
+  const rows = useMemo(() => buildDetailRows(drama), [drama]);
+
+  return (
+    <div className="mb-5">
+      {expanded && (
+        <>
+          <p className="text-[12px] text-white leading-[18px] mb-4">{drama.synopsis}</p>
+          {rows.map((r) => (
+            <DetailRow key={r.label} label={r.label} values={r.values} linked={r.linked} />
+          ))}
+        </>
+      )}
+      <div className="flex justify-center">
+        <button
+          onClick={() => setExpanded((e) => !e)}
+          className="inline-flex items-center gap-1 cursor-pointer mt-1"
+        >
+          <span className="text-[13px] font-semibold" style={{ color: ACCENT }}>
+            {expanded ? 'See less' : 'See more'}
+          </span>
+          {expanded
+            ? <ChevronUp size={14} style={{ color: ACCENT }} />
+            : <ChevronDown size={14} style={{ color: ACCENT }} />}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function EpisodeGrid({ drama, currentEpisode, onSelect }) {
   const [activeRange, setActiveRange] = useState(0);
@@ -58,25 +127,7 @@ function EpisodeGrid({ drama, currentEpisode, onSelect }) {
 function SynopsisContent({ drama, moreLikeThis, onPlay, userState, onSelectDrama }) {
   return (
     <div>
-      <div className="flex gap-2 mb-3 flex-wrap">
-        {drama.genres.map((g) => (
-          <span key={g} className="flex items-center gap-1 text-[11px] text-text-secondary bg-[#2d3136] px-[10px] py-[4px] rounded-[12px]">
-            {g} <ChevronRight size={12} className="text-text-dim" />
-          </span>
-        ))}
-      </div>
-      <p className="text-[12px] text-text-muted leading-[18px] mb-5">{drama.synopsis}</p>
-      <div className="flex gap-4 mb-5">
-        {drama.cast.map((c) => (
-          <div key={c.name} className="flex items-center gap-2">
-            <div className="w-[28px] h-[28px] rounded-full bg-[#3a3a40]" />
-            <div>
-              <p className="text-[11px] font-medium text-white">{c.name}</p>
-              <p className="text-[10px] text-text-muted">{c.role}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <SynopsisBlock drama={drama} />
       <button onClick={onPlay}
         className="w-full h-[44px] bg-accent rounded-[8px] flex items-center justify-center gap-2 cursor-pointer">
         <Play size={14} className="text-white" fill="white" />
