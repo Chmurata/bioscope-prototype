@@ -10,7 +10,7 @@
  */
 
 const LABEL_STYLES = {
-  Exclusive: 'bg-[#73F5FD] text-[#0A090B]',
+  Exclusive: 'bg-[#73F5FD] text-dark',
   New:       'bg-gradient-to-br from-blue-500 to-blue-600 text-white',
   Popular:   'bg-gradient-to-br from-rose-500 to-rose-600 text-white',
   Trending:  'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white',

@@ -1,11 +1,25 @@
 import { useApp } from '../contexts/AppContext';
-import { Home, Clapperboard, Flame, User } from 'lucide-react';
+import {
+  HomeIcon as HomeOutline,
+  FilmIcon as FilmOutline,
+  PlayCircleIcon as PlayOutline,
+  FireIcon as FireOutline,
+  UserIcon as UserOutline,
+} from '@heroicons/react/24/outline';
+import {
+  HomeIcon as HomeSolid,
+  FilmIcon as FilmSolid,
+  PlayCircleIcon as PlaySolid,
+  FireIcon as FireSolid,
+  UserIcon as UserSolid,
+} from '@heroicons/react/24/solid';
 
 const navItems = [
-  { icon: Home,         label: 'Home',       screen: 'home' },
-  { icon: Clapperboard, label: 'Microdrama', screen: 'microdrama' },
-  { icon: Flame,        label: 'New',        screen: null },
-  { icon: User,         label: 'Account',    screen: null },
+  { outline: HomeOutline,  solid: HomeSolid,  label: 'Home',       screen: 'home' },
+  { outline: FilmOutline,  solid: FilmSolid,  label: 'Microdrama', screen: 'microdrama' },
+  { outline: PlayOutline,  solid: PlaySolid,  label: 'Shorts',     screen: 'shorts' },
+  { outline: FireOutline,  solid: FireSolid,  label: 'New',        screen: null },
+  { outline: UserOutline,  solid: UserSolid,  label: 'Account',    screen: 'voucher-store' },
 ];
 
 export default function BottomNavbar() {
@@ -17,19 +31,14 @@ export default function BottomNavbar() {
         style={{ borderTop: '0.5px solid rgba(255,255,255,0.08)' }}>
         {navItems.map((item) => {
           const isActive = item.screen === screen;
-          const Icon = item.icon;
+          const Icon = isActive ? item.solid : item.outline;
           return (
             <button
               key={item.label}
               onClick={() => item.screen && setScreen(item.screen)}
               className="flex flex-col items-center justify-center gap-[2px] w-[44px] h-[44px] cursor-pointer"
             >
-              <Icon
-                size={22}
-                strokeWidth={isActive ? 2.2 : 1.5}
-                className={isActive ? 'text-white' : 'text-text-muted'}
-                fill={isActive ? 'white' : 'none'}
-              />
+              <Icon className={`w-[22px] h-[22px] ${isActive ? 'text-white' : 'text-text-muted'}`} />
               <span className={`text-[10px] ${isActive ? 'font-semibold text-white' : 'text-text-muted'}`}>
                 {item.label}
               </span>

@@ -47,7 +47,7 @@ export default function OTTPlatformsBlock({ title, platforms, cards, onBrowse })
       {/* Portrait poster cards — matches the rest of the home feed and fits real Bioscope artwork */}
       <div className="flex gap-3 overflow-x-auto overflow-y-visible no-scrollbar px-4">
         {cards.map((c) => (
-          <div key={c.id} className="shrink-0 relative rounded-[10px] overflow-hidden bg-[#1E2224]" style={{ width: 130, height: 184 }}>
+          <div key={c.id} className="shrink-0 relative rounded-[10px] overflow-hidden bg-surface-dark" style={{ width: 130, height: 184 }}>
             <img src={c.poster} alt="" className="w-full h-full object-cover" />
             {c.chip && <ContentLabel label={c.chip} position="tr" />}
           </div>
@@ -58,7 +58,7 @@ export default function OTTPlatformsBlock({ title, platforms, cards, onBrowse })
       <div className="px-4 pt-3">
         <button
           onClick={() => onBrowse?.(selected.id)}
-          className="w-full flex items-center justify-center gap-2 bg-[#1E2224] ring-1 ring-white/10 rounded-[10px] py-3 cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 bg-surface-dark ring-1 ring-white/10 rounded-[10px] py-3 cursor-pointer"
         >
           <span className="text-[14px] font-semibold text-white">Browse {selected.name}</span>
           <ArrowRight size={14} className="text-white" strokeWidth={2} />

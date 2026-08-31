@@ -312,11 +312,34 @@ export const dramas = [
   },
 ];
 
-export const subtitleLines = [
-  "তুমি আমায় কি ভেবেছিলে?",
-  "এই সম্পর্ক এখানেই শেষ",
-  "সত্যটা একদিন বেরিয়ে আসবেই",
-  "আমি চলে যাচ্ছি, চিরতরে",
-  "তোমার বিশ্বাস ভেঙেছি, মেনে নাও",
-  "আর কিছু বলার নেই",
-];
+// Parallel demo subtitle tracks — one line per language per beat. Player picks
+// the row by index and the column matching the current CC selection.
+export const subtitleTracks = {
+  English: [
+    'What did you take me for?',
+    'This is where it ends.',
+    'The truth always finds its way out.',
+    "I'm leaving — for good this time.",
+    "I broke your trust. Just accept it.",
+    'There is nothing left to say.',
+  ],
+  Bangla: [
+    'তুমি আমায় কি ভেবেছিলে?',
+    'এই সম্পর্ক এখানেই শেষ',
+    'সত্যটা একদিন বেরিয়ে আসবেই',
+    'আমি চলে যাচ্ছি, চিরতরে',
+    'তোমার বিশ্বাস ভেঙেছি, মেনে নাও',
+    'আর কিছু বলার নেই',
+  ],
+  Hindi: [
+    'तुमने मुझे क्या समझ रखा था?',
+    'यह रिश्ता यहीं खत्म होता है।',
+    'सच्चाई एक दिन सामने आ ही जाती है।',
+    'मैं जा रहा हूँ — हमेशा के लिए।',
+    'मैंने तुम्हारा भरोसा तोड़ा, मान लो।',
+    'अब और कुछ कहने को नहीं बचा।',
+  ],
+};
+
+// Legacy export — kept for any consumer still importing the old name.
+export const subtitleLines = subtitleTracks.Bangla;

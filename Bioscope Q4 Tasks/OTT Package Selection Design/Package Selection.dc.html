@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/modernist-c730697d-d007-49ba-93b1-b6aa816e6f0b/styles.css">
+<style>
+  body{margin:0}
+  .icn{width:14px;height:14px;flex:none}
+  .icn-lg{width:18px;height:18px;flex:none}
+  ::-webkit-scrollbar{display:none}
+  .chip{border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font-family:var(--font-body);font-size:12.5px;font-weight:600;padding:7px 13px;cursor:pointer;white-space:nowrap;flex:none}
+  .chip:hover{background:color-mix(in srgb, var(--color-text) 6%, transparent)}
+  .chip-active{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-bg)}
+  .badge{width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:10px;background:var(--color-text);color:var(--color-bg)}
+  .pay-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:color-mix(in srgb, var(--color-text) 60%, transparent)}
+</style>
+</helmet>
+<div data-screen-label="Package Selection" style="width:402px;height:874px;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column;overflow:hidden;position:relative;box-shadow:var(--shadow-lg)">
+
+  <div style="flex:none;display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4) var(--space-4) var(--space-3);border-bottom:2px solid var(--color-divider)">
+    <div style="width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-divider);cursor:pointer">
+      <svg class="icn-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div style="flex:1;min-width:0">
+      <h1 style="font-size:19px;margin:0 0 2px">Select Your Pack</h1>
+      <p style="margin:0;font-size:11.5px;color:color-mix(in srgb, var(--color-text) 55%, transparent)">OTT subscriptions, TVOD &amp; data — pay your way</p>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto">
+
+    <div style="padding:var(--space-4) 0 0">
+      <div style="padding:0 var(--space-4) var(--space-2);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 50%, transparent)">Validity</div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:0 var(--space-4) var(--space-4)">
+        <sc-for list="{{ durationChips }}" as="chip" hint-placeholder-count="6">
+          <sc-if value="{{ chip.active }}" hint-placeholder-val="{{ false }}">
+            <button class="chip chip-active" onClick="{{ chip.onClick }}">{{ chip.label }}</button>
+          </sc-if>
+          <sc-if value="{{ chip.inactive }}" hint-placeholder-val="{{ true }}">
+            <button class="chip" onClick="{{ chip.onClick }}">{{ chip.label }}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+
+      <div style="padding:0 var(--space-4) var(--space-2);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 50%, transparent)">Platform</div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:0 var(--space-4) var(--space-4)">
+        <sc-for list="{{ platformChips }}" as="chip" hint-placeholder-count="6">
+          <sc-if value="{{ chip.active }}" hint-placeholder-val="{{ false }}">
+            <button class="chip chip-active" onClick="{{ chip.onClick }}">{{ chip.label }}</button>
+          </sc-if>
+          <sc-if value="{{ chip.inactive }}" hint-placeholder-val="{{ true }}">
+            <button class="chip" onClick="{{ chip.onClick }}">{{ chip.label }}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="height:2px;background:var(--color-divider);margin:0 var(--space-4) var(--space-4)"></div>
+
+    <div style="padding:0 var(--space-4) var(--space-4)">
+      <div style="background:var(--color-accent-100);border:2px solid var(--color-accent);padding:var(--space-4);display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:6px">
+            <svg class="icn" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="var(--color-accent)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span style="font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;font-weight:800;color:var(--color-accent-800)">Most Popular</span>
+          </div>
+          <span class="tag tag-neutral">7 Days</span>
+        </div>
+        <h3 style="margin:0;font-size:20px">Weekly Binge Combo</h3>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="badge">S</span>
+          <span class="badge">D</span>
+          <span style="font-size:12px;color:color-mix(in srgb, var(--color-text) 65%, transparent)">StreamMax + DesiFlix + 1 Live Match Pass</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px">
+          <span style="font-family:var(--font-heading);font-weight:800;font-size:28px">Tk 149</span>
+          <span style="font-size:12px;color:color-mix(in srgb, var(--color-text) 55%, transparent)">/ 7 days</span>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>Balance</div>
+          <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>Wallet</div>
+          <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Card</div>
+        </div>
+        <button class="btn btn-primary btn-block" style="justify-content:space-between">Subscribe Now
+          <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </div>
+
+    <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 var(--space-4) var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)">
+        <sc-for list="{{ filteredPacks }}" as="pack" hint-placeholder-count="4">
+          <div class="card elev-sm">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="card-kicker">{{ pack.kicker }}</span>
+              <span class="tag tag-outline">{{ pack.durationTag }}</span>
+            </div>
+            <h4 class="card-title">{{ pack.title }}</h4>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ pack.platformBadges }}" as="badge" hint-placeholder-count="2">
+                <span class="badge">{{ badge.letter }}</span>
+              </sc-for>
+              <span style="font-size:11.5px;color:color-mix(in srgb, var(--color-text) 60%, transparent)">{{ pack.platformSummary }}</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:20px">{{ pack.price }}</span>
+              <span style="font-size:11.5px;color:color-mix(in srgb, var(--color-text) 55%, transparent)">{{ pack.priceUnit }}</span>
+            </div>
+            <div style="height:1px;background:var(--color-divider);opacity:0.5;margin:2px 0"></div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <sc-if value="{{ pack.payBalance }}" hint-placeholder-val="{{ false }}">
+                <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>Balance</div>
+              </sc-if>
+              <sc-if value="{{ pack.payWallet }}" hint-placeholder-val="{{ false }}">
+                <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>Wallet</div>
+              </sc-if>
+              <sc-if value="{{ pack.payCard }}" hint-placeholder-val="{{ false }}">
+                <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>Card</div>
+              </sc-if>
+              <sc-if value="{{ pack.payVoucher }}" hint-placeholder-val="{{ false }}">
+                <div class="pay-item"><svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>Voucher</div>
+              </sc-if>
+            </div>
+            <button class="btn btn-secondary btn-block" style="justify-content:space-between">Select Pack
+              <svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:var(--space-8) var(--space-4);text-align:center;color:color-mix(in srgb, var(--color-text) 55%, transparent);font-size:13px">No packs match these filters.</div>
+    </sc-if>
+
+    <div style="padding:0 var(--space-4) var(--space-8)">
+      <p style="margin:0;font-size:10.5px;line-height:1.5;color:color-mix(in srgb, var(--color-text) 50%, transparent)">Prices include VAT. Auto-renewal can be turned off anytime from My Subscriptions.</p>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:402,&quot;height&quot;:874}}">
+const DURATIONS = ['All','1 Day','7 Days','28 Days','90 Days','365 Days'];
+const PLATFORMS = ['All','StreamMax','PlayArena','DesiFlix','Combo','Data+OTT'];
+
+const PACKS = [
+  { id:'p1', kicker:'OTT BUNDLE', title:'StreamMax Daily', platformTag:'StreamMax', durationTag:'1 Day',
+    platformBadges:[{letter:'S'}], platformSummary:'StreamMax', price:'Tk 29', priceUnit:'/ day',
+    payBalance:true, payWallet:false, payCard:false, payVoucher:false },
+  { id:'p2', kicker:'OTT BUNDLE', title:'DesiFlix Weekly', platformTag:'DesiFlix', durationTag:'7 Days',
+    platformBadges:[{letter:'D'}], platformSummary:'DesiFlix', price:'Tk 99', priceUnit:'/ 7 days',
+    payBalance:true, payWallet:true, payCard:false, payVoucher:false },
+  { id:'p3', kicker:'COMBO · OTT + TVOD', title:'PlayArena Season Pass', platformTag:'PlayArena', durationTag:'90 Days',
+    platformBadges:[{letter:'P'}], platformSummary:'PlayArena + live match access', price:'Tk 799', priceUnit:'/ 90 days',
+    payBalance:true, payWallet:true, payCard:true, payVoucher:true },
+  { id:'p4', kicker:'COMBO PACK', title:'Monthly Mega Bundle', platformTag:'Combo', durationTag:'28 Days',
+    platformBadges:[{letter:'S'},{letter:'P'},{letter:'D'}], platformSummary:'StreamMax + PlayArena + DesiFlix', price:'Tk 399', priceUnit:'/ 28 days',
+    payBalance:true, payWallet:true, payCard:true, payVoucher:true },
+  { id:'p5', kicker:'DATA + OTT', title:'Data + Entertainment Pack', platformTag:'Data+OTT', durationTag:'28 Days',
+    platformBadges:[{letter:'S'}], platformSummary:'2GB data + StreamMax', price:'Tk 299', priceUnit:'/ 28 days',
+    payBalance:true, payWallet:true, payCard:false, payVoucher:false },
+  { id:'p6', kicker:'OTT BUNDLE', title:'Annual DesiFlix Pass', platformTag:'DesiFlix', durationTag:'365 Days',
+    platformBadges:[{letter:'D'}], platformSummary:'DesiFlix', price:'Tk 1499', priceUnit:'/ year',
+    payBalance:false, payWallet:false, payCard:true, payVoucher:true },
+];
+
+class Component extends DCLogic {
+  state = { duration: 'All', platform: 'All' };
+
+  renderVals() {
+    const { duration, platform } = this.state;
+    const durationChips = DURATIONS.map(d => ({
+      label: d, active: d === duration, inactive: d !== duration,
+      onClick: () => this.setState({ duration: d }),
+    }));
+    const platformChips = PLATFORMS.map(p => ({
+      label: p, active: p === platform, inactive: p !== platform,
+      onClick: () => this.setState({ platform: p }),
+    }));
+    const filteredPacks = PACKS.filter(p =>
+      (duration === 'All' || p.durationTag === duration) &&
+      (platform === 'All' || p.platformTag === platform)
+    );
+    return {
+      durationChips, platformChips, filteredPacks,
+      hasResults: filteredPacks.length > 0,
+      noResults: filteredPacks.length === 0,
+    };
+  }
+}
+</script>
+</body>
+</html>

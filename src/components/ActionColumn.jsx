@@ -45,9 +45,9 @@ export default function ActionColumn() {
             key={action.label}
             whileTap={{ scale: 1.3 }}
             onClick={action.onTap}
-            className="flex flex-col items-center gap-1 cursor-pointer"
+            className="flex flex-col items-center gap-2 cursor-pointer group"
           >
-            <div className="w-[36px] h-[36px] rounded-full bg-black/15 backdrop-blur-md ring-1 ring-white/10 flex items-center justify-center">
+            <div className="w-[48px] h-[48px] rounded-full bg-white/5 ring-1 ring-white/20 flex items-center justify-center transition-colors group-active:bg-white/10">
               <Icon
                 size={20}
                 className="text-white"
@@ -55,7 +55,7 @@ export default function ActionColumn() {
                 strokeWidth={1.5}
               />
             </div>
-            <span className="text-[10px] text-white">{action.label}</span>
+            <span className="text-[12px] text-white/90 font-medium">{action.label}</span>
           </motion.button>
         );
       })}

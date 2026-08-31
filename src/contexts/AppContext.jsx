@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { demoLocker } from '../data/vouchers';
 import { dramas } from '../data/dramas';
 
 const AppContext = createContext();
@@ -9,18 +10,20 @@ const SEED_PROGRESS = dramas.reduce((acc, d) => {
   return acc;
 }, {});
 
-const SCREENS = {
+export const SCREENS = {
   HOME: 'home',
   BROWSE: 'browse',
+  SHORTS: 'shorts',
   MICRODRAMA: 'microdrama',
   PLAYER: 'player',
+  CONTENT_DETAIL: 'content-detail',
+  PACK_CATALOGUE: 'pack-catalogue',
+  VOUCHER_STORE: 'voucher-store'
 };
 
 const DEFAULT_VARIANTS = {
   browse: 'V1',
-  detail: 'V1',
   player: 'V1',
-  episodeSelector: 'V2',
 };
 
 export function AppProvider({ children }) {
@@ -30,6 +33,12 @@ export function AppProvider({ children }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [showEpisodeSelector, setShowEpisodeSelector] = useState(false);
+  const [paywallContext, setPaywallContext] = useState(null); // { origin, content }
+  const [showMySubscriptions, setShowMySubscriptions] = useState(false);
+  const [activeCampaign, setActiveCampaign] = useState(null); // { packId, type: 'segment'|'timer', label: string, discount: number, expiresAt?: number }
+  
+  // Vouchers state
+  const [ownedVouchers, setOwnedVouchers] = useState(demoLocker);
   const [showTransition, setShowTransition] = useState(false);
   const [liked, setLiked] = useState({});
   const [myList, setMyList] = useState({});
@@ -38,8 +47,21 @@ export function AppProvider({ children }) {
   const [screenHistory, setScreenHistory] = useState([SCREENS.HOME]);
   const [progressByDrama, setProgressByDrama] = useState(SEED_PROGRESS);
   const [swipeHintSeen, setSwipeHintSeen] = useState(false);
-  const [isVip, setIsVip] = useState(false);
-  const [showSubscribe, setShowSubscribe] = useState(false);
+  const [subscription, setSubscription] = useState(null); // { packId, expiresLabel }
+  const [rentals, setRentals] = useState([]);
+  const [carrierKnown, setCarrierKnown] = useState(true);
+  const [orientation, setOrientation] = useState('portrait');
+  // Pending ad-streak request from the dev panel. PlayerScreen reads this
+  // and kicks off the streak; it's cleared by consumeAdRequest() once handled.
+  const [pendingAdRequest, setPendingAdRequest] = useState(null);
+
+  // Queue an ad streak (count + skip/replay flags). Routes to PlayerScreen if
+  // the user isn't already there; otherwise the in-screen handler picks it up.
+  const triggerAdStreak = ({ count = 1, allowSkip = true, allowReplay = true } = {}) => {
+    setPendingAdRequest({ count, allowSkip, allowReplay });
+    if (screen !== SCREENS.PLAYER) navigate(SCREENS.PLAYER);
+  };
+  const consumeAdRequest = () => setPendingAdRequest(null);
 
   // Advances the playback progress for the active drama/episode by `deltaSeconds`.
   // If the tick would exceed totalSeconds, clamps at the cap (PlayerScreen handles auto-advance).
@@ -131,6 +153,10 @@ export function AppProvider({ children }) {
     setVariants(prev => ({ ...prev, [key]: value }));
   };
 
+  const setShowSubscribe = (open) => {
+    if (open) navigate(SCREENS.PACK_CATALOGUE);
+  };
+
   const value = {
     screen, setScreen: navigate, goBack,
     selectedDrama, setSelectedDrama, selectDrama, playDrama,
@@ -138,15 +164,24 @@ export function AppProvider({ children }) {
     isPlaying, setIsPlaying,
     showDetail, setShowDetail,
     showEpisodeSelector, setShowEpisodeSelector,
-    showTransition, setShowTransition,
+    paywallContext, setPaywallContext,
+    showMySubscriptions, setShowMySubscriptions,
+    activeCampaign, setActiveCampaign,
+    ownedVouchers, setOwnedVouchers,
     liked, toggleLike, ensureLiked,
     myList, toggleMyList,
     variants, setVariant,
     userState, setUserState,
     progressByDrama, tickProgress,
+    showTransition, setShowTransition,
     swipeHintSeen, setSwipeHintSeen,
-    isVip, setIsVip,
-    showSubscribe, setShowSubscribe,
+    subscription, setSubscription,
+    rentals, setRentals,
+    carrierKnown, setCarrierKnown,
+    orientation, setOrientation,
+    showSubscribe: setShowSubscribe,
+    setShowSubscribe,
+    pendingAdRequest, triggerAdStreak, consumeAdRequest,
     SCREENS,
   };
 
@@ -158,5 +193,3 @@ export function useApp() {
   if (!ctx) throw new Error('useApp must be used within AppProvider');
   return ctx;
 }
-
-export { SCREENS };

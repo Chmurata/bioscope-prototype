@@ -15,7 +15,7 @@ export default function MicroDramaRail({ items, onOpenMicroDrama, onPlay }) {
         </button>
         <button
           onClick={onOpenMicroDrama}
-          className="flex items-center gap-1 bg-[#1E2224] ring-1 ring-white/10 rounded-[6px] px-2 py-0.5 cursor-pointer"
+          className="flex items-center gap-1 bg-surface-dark ring-1 ring-white/10 rounded-[6px] px-2 py-0.5 cursor-pointer"
         >
           <span className="text-[10px] font-medium text-white">See all</span>
           <ArrowRight size={10} className="text-white" strokeWidth={2} />
@@ -30,7 +30,7 @@ export default function MicroDramaRail({ items, onOpenMicroDrama, onPlay }) {
             onClick={() => onPlay?.(d)}
             className="shrink-0 w-[128px] text-left cursor-pointer"
           >
-            <div className="relative w-[128px] h-[180px] rounded-[8px] overflow-hidden bg-[#1E2224]">
+            <div className="relative w-[128px] h-[180px] rounded-[8px] overflow-hidden bg-surface-dark">
               <img src={d.poster} alt={d.title} className="w-full h-full object-cover" />
               <div className="absolute bottom-1.5 left-1.5">
                 <span className="text-[9px] text-white bg-black/60 px-1.5 py-[1px] rounded-[3px]">{d.totalEpisodes} EP</span>

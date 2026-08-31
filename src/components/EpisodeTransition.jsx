@@ -80,7 +80,7 @@ export default function EpisodeTransition() {
           {/* Cancel button */}
           <button
             onClick={() => setShowTransition(false)}
-            className="mt-2 px-5 py-2 rounded-full border border-text-dim text-[13px] font-medium text-text-secondary cursor-pointer"
+            className="mt-2 px-5 py-2 rounded-full border border-outline-light text-[13px] font-medium text-text-secondary cursor-pointer"
           >
             Cancel
           </button>

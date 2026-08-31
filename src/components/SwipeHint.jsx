@@ -30,7 +30,7 @@ export default function SwipeHint({ visible, onDismiss }) {
             >
               <ChevronUp size={14} className="text-white" />
             </motion.div>
-            <span className="text-[11px] font-medium text-white">
+            <span className="text-[10px] font-medium text-white">
               Swipe up for next episode
             </span>
           </div>

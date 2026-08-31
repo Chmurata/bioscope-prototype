@@ -5,5 +5,6 @@ import mastercard from './mastercard.svg';
 import amex from './amex.svg';
 import rocket from './rocket.svg';
 import upay from './upay.svg';
+import gp from './gp.png';
 
-export const PAYMENT_LOGOS = { bkash, nagad, visa, mastercard, amex, rocket, upay };
+export const PAYMENT_LOGOS = { bkash, nagad, visa, mastercard, amex, rocket, upay, gp };

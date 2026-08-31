@@ -29,6 +29,38 @@
   --color-pill-active: #ffffff;
   --color-pill-inactive: #262b30;
 
+  /* Q4 Theme */
+  --color-cyan: #00BBFF;
+  --color-amber: #FF9900;
+  --color-dark: #0A090B;
+  --color-surface-dark: #1E2224;
+  --color-pink: #FF2E93;
+  --color-gp-blue: #0055A5;
+  --color-cyan-light: #73F5FD;
+  --color-amber-light: #FFB03A;
+  --color-surface-alt: #212628;
+  --color-surface-panel: #252a2d;
+  --color-error-surface: #2A1A1A;
+
+  /* Payment method list — light theme */
+  --color-ink: #1A1A1A;
+  --color-divider-light: #E5E7EB;
+  --color-select-blue: #1E40E8;
+  --color-select-tint: #E7EFFF;
+  --color-outline-light: #9DA4AE;
+
+  /* Pack card badges/notches */
+  --color-badge-ink: #25323D;
+  --color-badge-notch: #7A7A7A;
+  --color-campaign-notch: #A81155;
+  --color-campaign-accent: #FF8A00;
+  --color-icon-subtle: #D2D6DB;
+  --color-bkash-red: #E51937;
+  --premium-linear-1: #FFDC86;
+  --premium-linear-2: #FFD160;
+  --gradient-recommended: linear-gradient(135deg, #1E2A6B 0%, #111A42 40%, #0A0F28 75%, #050813 100%);
+  --gradient-subscribe: linear-gradient(90deg, var(--premium-linear-1, #FFDC86) 40%, var(--premium-linear-2, #FFD160) 100%);
+
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 

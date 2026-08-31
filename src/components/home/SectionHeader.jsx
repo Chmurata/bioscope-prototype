@@ -8,7 +8,7 @@ export default function SectionHeader({ title, onSeeAll, seeAll = true }) {
       {seeAll && (
         <button
           onClick={onSeeAll}
-          className="flex items-center gap-1 bg-[#1E2224] ring-1 ring-white/10 rounded-[6px] px-2 py-0.5 cursor-pointer"
+          className="flex items-center gap-1 bg-surface-dark ring-1 ring-white/10 rounded-[6px] px-2 py-0.5 cursor-pointer"
         >
           <span className="text-[10px] font-medium text-white">See all</span>
           <ArrowRight size={10} className="text-white" strokeWidth={2} />

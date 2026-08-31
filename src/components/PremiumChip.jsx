@@ -23,7 +23,7 @@ export default function PremiumChip({ onClick }) {
         animate={{ x: '260%' }}
         transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.8 }}
       />
-      <Crown size={11} className="text-amber-300" fill="#fcd34d" />
+      <Crown size={11} className="text-amber-300" fill="currentColor" />
       <span className="text-[10px] font-semibold text-white tracking-wide">Unlock Premium</span>
     </motion.button>
   );

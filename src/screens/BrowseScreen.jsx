@@ -72,7 +72,7 @@ export default function BrowseScreen() {
                   {/* Featured badge */}
                   <div className="absolute top-3 right-3">
                     <div className="flex items-center gap-1 bg-white/15 backdrop-blur-sm rounded-full px-2 py-0.5">
-                      <Star size={10} className="text-yellow-400" fill="#facc15" />
+                      <Star size={10} className="text-yellow-400" fill="currentColor" />
                       <span className="text-[9px] font-semibold text-white">Featured</span>
                     </div>
                   </div>
@@ -107,7 +107,7 @@ export default function BrowseScreen() {
                 key={drama.id}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleCardTap(drama)}
-                className="flex gap-3 w-full text-left cursor-pointer bg-[#1a1d22] rounded-[10px] overflow-hidden"
+                className="flex gap-3 w-full text-left cursor-pointer bg-card rounded-[10px] overflow-hidden"
               >
                 {/* Landscape poster */}
                 <div className="w-[120px] h-[80px] flex-shrink-0 relative">

@@ -15,7 +15,7 @@ export default function CircleRail({ title, items, seeAll = true, onSeeAll, size
             <div className="relative">
               {it.chip && (
                 <span
-                  className="absolute -top-1 left-1/2 -translate-x-1/2 z-10 px-2 py-[4px] rounded-[3px] text-[9.5px] font-semibold tracking-wide leading-none bg-[#73F5FD] text-[#0A090B]"
+                  className="absolute -top-1 left-1/2 -translate-x-1/2 z-10 px-2 py-[4px] rounded-[3px] text-[9.5px] font-semibold tracking-wide leading-none bg-[#73F5FD] text-dark"
                 >
                   {it.chip}
                 </span>

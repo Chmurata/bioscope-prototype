@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-// Horizontal scrollable category pills: Home / Movies / Shows / Sports / Free TV
+// Horizontal scrollable category pills.
 // Active = white pill with black text. Inactive = transparent with white text.
-const DEFAULT_TABS = ['Home', 'Movies', 'Shows', 'Sports', 'Free TV'];
+const DEFAULT_TABS = ['Home', 'Movies', 'Shows', 'Sports', 'Microdrama', 'Free TV'];
 
 export default function CategoryTabs({ tabs = DEFAULT_TABS, value, onChange }) {
   const [internal, setInternal] = useState(tabs[0]);
@@ -17,7 +17,7 @@ export default function CategoryTabs({ tabs = DEFAULT_TABS, value, onChange }) {
           <button
             key={t}
             onClick={() => set(t)}
-            className={`shrink-0 inline-flex items-center justify-center rounded-full px-3 h-[24px] cursor-pointer transition-colors ${
+            className={`shrink-0 inline-flex items-center justify-center rounded-[8px] px-3 h-[26px] cursor-pointer transition-colors ${
               isActive ? 'bg-white' : 'bg-black/25'
             }`}
           >

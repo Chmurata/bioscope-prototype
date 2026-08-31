@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Captions, Globe2, Gauge } from 'lucide-react';
+import { X, Check, Globe2, Gauge, Zap } from 'lucide-react';
 
-const CC_OPTIONS = ['Off', 'English', 'Bangla', 'Hindi'];
-const AUDIO_OPTIONS = ['Bangla (Original)', 'English (Dubbed)', 'Hindi (Dubbed)'];
+const AUDIO_OPTIONS   = ['Bangla (Original)', 'English (Dubbed)', 'Hindi (Dubbed)'];
 const QUALITY_OPTIONS = ['Auto', '1080p', '720p', '480p', '360p'];
+const SPEED_OPTIONS   = ['0.5x', '0.75x', '1x', '1.25x', '1.5x', '2x'];
 
 function Row({ icon: Icon, label, value, onClick }) {
   return (
@@ -46,11 +46,15 @@ function Picker({ title, options, value, onPick, onBack }) {
   );
 }
 
-export default function PlayerSettingsSheet({ open, onClose }) {
-  const [cc, setCc] = useState('Off');
-  const [audio, setAudio] = useState('Bangla (Original)');
-  const [quality, setQuality] = useState('Auto');
-  const [view, setView] = useState('root'); // 'root' | 'cc' | 'audio' | 'quality'
+// Controlled sheet — state lives in PlayerScreen so the top CC pill stays
+// in sync with the picker inside the sheet.
+export default function PlayerSettingsSheet({
+  open, onClose,
+  audio, onAudioChange,
+  quality, onQualityChange,
+  speed, onSpeedChange,
+}) {
+  const [view, setView] = useState('root'); // 'root' | 'audio' | 'quality' | 'speed'
 
   function close() {
     setView('root');
@@ -68,7 +72,7 @@ export default function PlayerSettingsSheet({ open, onClose }) {
         >
           <div className="absolute inset-0 bg-black/60" onClick={close} />
           <motion.div
-            className="absolute bottom-0 left-0 right-0 bg-[#1a1b1f] rounded-t-[16px] overflow-hidden"
+            className="absolute bottom-0 left-0 right-0 bg-card rounded-t-[16px] overflow-hidden"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -87,16 +91,16 @@ export default function PlayerSettingsSheet({ open, onClose }) {
                   </button>
                 </div>
                 <div className="py-1 pb-4">
-                  <Row icon={Captions} label="Subtitles / CC" value={cc} onClick={() => setView('cc')} />
-                  <Row icon={Globe2} label="Audio" value={audio} onClick={() => setView('audio')} />
-                  <Row icon={Gauge} label="Video quality" value={quality} onClick={() => setView('quality')} />
+                  <Row icon={Zap}    label="Playback speed" value={speed}   onClick={() => setView('speed')} />
+                  <Row icon={Gauge}  label="Video quality"  value={quality} onClick={() => setView('quality')} />
+                  <Row icon={Globe2} label="Audio"          value={audio}   onClick={() => setView('audio')} />
                 </div>
               </>
             )}
 
-            {view === 'cc' && <Picker title="Subtitles / CC" options={CC_OPTIONS} value={cc} onPick={setCc} onBack={() => setView('root')} />}
-            {view === 'audio' && <Picker title="Audio" options={AUDIO_OPTIONS} value={audio} onPick={setAudio} onBack={() => setView('root')} />}
-            {view === 'quality' && <Picker title="Video quality" options={QUALITY_OPTIONS} value={quality} onPick={setQuality} onBack={() => setView('root')} />}
+            {view === 'speed'   && <Picker title="Playback speed" options={SPEED_OPTIONS}   value={speed}   onPick={onSpeedChange}   onBack={() => setView('root')} />}
+            {view === 'quality' && <Picker title="Video quality"  options={QUALITY_OPTIONS} value={quality} onPick={onQualityChange} onBack={() => setView('root')} />}
+            {view === 'audio'   && <Picker title="Audio"          options={AUDIO_OPTIONS}   value={audio}   onPick={onAudioChange}   onBack={() => setView('root')} />}
           </motion.div>
         </motion.div>
       )}

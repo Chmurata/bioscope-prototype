@@ -4,6 +4,12 @@ import { PAYMENT_LOGOS } from '../assets/payment-logos';
 // bKash (highlighted default) · Rocket · Nagad · Other Cards & MFS · upay
 export const PAYMENT_METHODS = [
   {
+    id: 'balance',
+    name: 'Pay from Mobile Balance',
+    tileBg: '#FFFFFF',
+    logo: PAYMENT_LOGOS.gp,
+  },
+  {
     id: 'bkash',
     name: 'bKash',
     tileBg: '#FFFFFF',

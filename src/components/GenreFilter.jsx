@@ -18,8 +18,8 @@ export default function GenreFilter({ onFilter }) {
           onClick={() => handleSelect(genre)}
           className={`flex-shrink-0 px-[14px] py-[6px] rounded-[16px] text-[12px] font-medium cursor-pointer transition-colors duration-150
             ${active === genre
-              ? 'bg-pill-active text-bg'
-              : 'bg-pill-inactive text-text-secondary'
+              ? 'bg-white text-bg'
+              : 'bg-card text-text-secondary'
             }`}
         >
           {genre}

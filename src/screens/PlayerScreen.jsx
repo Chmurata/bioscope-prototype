@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
-import { subtitleLines } from '../data/dramas';
+import { subtitleTracks } from '../data/dramas';
 import ActionColumn from '../components/ActionColumn';
-import EpisodeSelector from '../components/EpisodeSelector';
 import EpisodeTransition from '../components/EpisodeTransition';
 import Seekbar from '../components/Seekbar';
 import DoubleTapHeart from '../components/DoubleTapHeart';
@@ -13,7 +12,7 @@ import InlineAdStrip from '../components/InlineAdStrip';
 import FullPageAd from '../components/FullPageAd';
 import { inlineAds, fullPageAds } from '../data/ads';
 import { useDoubleTap } from '../hooks/useDoubleTap';
-import { ArrowLeft, Settings, FastForward, Play, Pause, ChevronRight, ThumbsUp, Share2, ListVideo, Plus, Check } from 'lucide-react';
+import { ArrowLeft, Settings, Captions, CaptionsOff, Play, Pause, ChevronRight, ThumbsUp, Share2, ListVideo, Plus, Check } from 'lucide-react';
 
 const EPISODE_TOTAL_SECONDS = 120; // 2 min per episode (matches fixture seed)
 const SWIPE_THRESHOLD = 90;        // px dragged up/down before episode switch triggers
@@ -27,6 +26,7 @@ export default function PlayerScreen() {
     setShowEpisodeSelector, playEpisode,
     tickProgress,
     setShowSubscribe,
+    pendingAdRequest, consumeAdRequest,
   } = useApp();
 
   const [showPlayPause, setShowPlayPause] = useState(false);
@@ -36,10 +36,25 @@ export default function PlayerScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inlineAdDismissed, setInlineAdDismissed] = useState(false);
   const [swipeCount, setSwipeCount] = useState(0);
-  const [activeFullAd, setActiveFullAd] = useState(null);
-  // Speed cycles: 0 = normal (icon + "Speed"), 1 = "1x", 2 = "2x", back to 0.
-  const [speedIndex, setSpeedIndex] = useState(0);
-  const cycleSpeed = () => setSpeedIndex((i) => (i + 1) % 3);
+  // Ad streak state:
+  //   { ads: [<ad>...], index, allowSkip, allowReplay, pendingEpisode }
+  // pendingEpisode is null when triggered from the dev panel (no advance after).
+  const [adStreak, setAdStreak] = useState(null);
+  // Player settings — lifted from PlayerSettingsSheet so the top pill (CC) can
+  // toggle subtitles directly and the sheet stays in sync.
+  const [cc, setCc] = useState('English');          // 'Off' | 'English' | 'Bangla' | 'Hindi' — subtitles ON by default
+  const [audio, setAudio] = useState('Bangla (Original)');
+  const [quality, setQuality] = useState('Auto');
+  const [speed, setSpeed] = useState('1x');         // '0.5x' | '1x' | '1.25x' | '1.5x' | '2x'
+
+  const subtitlesOn = cc !== 'Off';
+  // Top pill cycles: English → Bangla → Hindi → Off → English …
+  const CC_CYCLE = ['English', 'Bangla', 'Hindi', 'Off'];
+  const cycleSubtitles = () => {
+    const i = CC_CYCLE.indexOf(cc);
+    const next = CC_CYCLE[(i + 1) % CC_CYCLE.length];
+    setCc(next);
+  };
 
   // Reset dismissal per episode so user sees the ad again on new episodes
   useEffect(() => { setInlineAdDismissed(false); }, [currentEpisode]);
@@ -51,8 +66,10 @@ export default function PlayerScreen() {
   // Subtitle ticker
   useEffect(() => {
     if (!isPlaying) return;
+    // Use the English track's length as the canonical line count — all tracks
+    // are kept parallel so the index can index into any of them.
     const interval = setInterval(() => {
-      setSubtitleIndex(prev => (prev + 1) % subtitleLines.length);
+      setSubtitleIndex(prev => (prev + 1) % subtitleTracks.English.length);
     }, 3000);
     return () => clearInterval(interval);
   }, [isPlaying]);
@@ -114,8 +131,15 @@ export default function PlayerScreen() {
     const nextCount = swipeCount + 1;
     setSwipeCount(nextCount);
     if (nextCount % 3 === 0) {
+      // Organic in-feed ad — single, skip + replay allowed by default.
       const ad = fullPageAds[(nextCount / 3 - 1) % fullPageAds.length];
-      setActiveFullAd({ ad, pendingEpisode: currentEpisode + 1 });
+      setAdStreak({
+        ads: [ad],
+        index: 0,
+        allowSkip: true,
+        allowReplay: true,
+        pendingEpisode: currentEpisode + 1,
+      });
       setIsPlaying(false);
     } else {
       playEpisode(currentEpisode + 1);
@@ -136,6 +160,24 @@ export default function PlayerScreen() {
     else if (crossedDown) goPrevEpisode();
   }, [goNextEpisode, goPrevEpisode]);
 
+  // Dev-panel triggered ad streak. Reads pendingAdRequest from context, builds
+  // a streak of the requested length, and clears the request.
+  useEffect(() => {
+    if (!pendingAdRequest) return;
+    const ads = Array.from({ length: pendingAdRequest.count }, (_, i) =>
+      fullPageAds[i % fullPageAds.length]
+    );
+    setAdStreak({
+      ads,
+      index: 0,
+      allowSkip: pendingAdRequest.allowSkip,
+      allowReplay: pendingAdRequest.allowReplay,
+      pendingEpisode: null,
+    });
+    setIsPlaying(false);
+    consumeAdRequest();
+  }, [pendingAdRequest, consumeAdRequest, setIsPlaying]);
+
   // Arrow Up → next episode, Arrow Down → previous. Skips when modals are open
   // (episode selector / full-page ad / settings) or when typing in an input.
   useEffect(() => {
@@ -151,12 +193,19 @@ export default function PlayerScreen() {
     return () => window.removeEventListener('keydown', onKey);
   }, [goNextEpisode, goPrevEpisode]);
 
-  const handleFullAdDismiss = useCallback(() => {
-    if (activeFullAd?.pendingEpisode) {
-      playEpisode(activeFullAd.pendingEpisode);
-    }
-    setActiveFullAd(null);
-  }, [activeFullAd, playEpisode]);
+  // Advance within the streak. After the last ad → resume the pending episode
+  // (organic flow) or just dismiss (dev-panel trigger with no pendingEpisode).
+  const advanceAdStreak = useCallback(() => {
+    setAdStreak((s) => {
+      if (!s) return null;
+      const nextIndex = s.index + 1;
+      if (nextIndex >= s.ads.length) {
+        if (s.pendingEpisode != null) playEpisode(s.pendingEpisode);
+        return null;
+      }
+      return { ...s, index: nextIndex };
+    });
+  }, [playEpisode]);
 
   const handleSeekComplete = () => {
     setIsPlaying(false);
@@ -173,11 +222,12 @@ export default function PlayerScreen() {
     <div ref={playerRef} className="relative w-full h-full bg-black overflow-hidden">
       {/* Background poster — draggable surface behind overlays */}
       <motion.div
-        className="absolute inset-0 z-[12]"
+        className="absolute inset-0 z-[12] select-none"
         drag="y"
         dragDirectionLock
         dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.35}
+        dragElastic={0.18}
+        dragMomentum={false}
         onDragEnd={handleDragEnd}
         onPointerUp={gestureHandler}
       >
@@ -198,13 +248,15 @@ export default function PlayerScreen() {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={cycleSpeed}
+                onClick={cycleSubtitles}
                 className="flex items-center gap-1 bg-black/15 backdrop-blur-md ring-1 ring-white/10 rounded-[12px] px-2 py-1 cursor-pointer"
-                aria-label="Cycle playback speed"
+                aria-label={subtitlesOn ? `Switch subtitles — currently ${cc}` : 'Turn on subtitles'}
               >
-                <FastForward size={12} className="text-white" />
-                <span className="text-[12px] font-medium text-white tabular-nums">
-                  {speedIndex === 0 ? 'Speed' : `Speed ${speedIndex === 1 ? '1x' : '2x'}`}
+                {subtitlesOn
+                  ? <Captions size={12} className="text-white" />
+                  : <CaptionsOff size={12} className="text-white/70" />}
+                <span className={`text-[12px] font-medium tabular-nums ${subtitlesOn ? 'text-white' : 'text-white/70'}`}>
+                  {subtitlesOn ? cc : 'CC Off'}
                 </span>
               </button>
               <button onClick={() => setSettingsOpen(true)} className="cursor-pointer" aria-label="Player settings">
@@ -246,13 +298,15 @@ export default function PlayerScreen() {
             <span className="text-[13px] font-medium text-white/80">EP.{currentEpisode} of {selectedDrama.totalEpisodes}</span>
             <div className="flex items-center gap-3">
               <button
-                onClick={cycleSpeed}
+                onClick={cycleSubtitles}
                 className="flex items-center gap-1 bg-black/15 backdrop-blur-md ring-1 ring-white/10 rounded-[12px] px-2 py-1 cursor-pointer"
-                aria-label="Cycle playback speed"
+                aria-label={subtitlesOn ? `Switch subtitles — currently ${cc}` : 'Turn on subtitles'}
               >
-                <FastForward size={11} className="text-white" />
-                <span className="text-[11px] font-medium text-white tabular-nums">
-                  {speedIndex === 0 ? 'Speed' : `Speed ${speedIndex === 1 ? '1x' : '2x'}`}
+                {subtitlesOn
+                  ? <Captions size={11} className="text-white" />
+                  : <CaptionsOff size={11} className="text-white/70" />}
+                <span className={`text-[11px] font-medium tabular-nums ${subtitlesOn ? 'text-white' : 'text-white/70'}`}>
+                  {subtitlesOn ? cc : 'CC Off'}
                 </span>
               </button>
               <button onClick={() => setSettingsOpen(true)} className="cursor-pointer" aria-label="Player settings">
@@ -279,23 +333,27 @@ export default function PlayerScreen() {
               </div>
             )}
 
-            <div className="flex items-center gap-5">
-              <button onClick={() => toggleLike(selectedDrama.id)} className="flex items-center gap-1.5 cursor-pointer">
-                <ThumbsUp size={18} className="text-white" fill={isLiked ? 'white' : 'none'} strokeWidth={1.5} />
-                <span className="text-[11px] text-white">83.4K</span>
-              </button>
-              <button className="flex items-center gap-1.5 cursor-pointer">
-                <Share2 size={18} className="text-white" strokeWidth={1.5} />
-                <span className="text-[11px] text-white">Share</span>
-              </button>
-              <button onClick={() => setShowEpisodeSelector(true)} className="flex items-center gap-1.5 cursor-pointer">
-                <ListVideo size={18} className="text-white" strokeWidth={1.5} />
-                <span className="text-[11px] text-white">Episodes</span>
-              </button>
-              <button onClick={() => toggleMyList(selectedDrama.id)} className="flex items-center gap-1.5 cursor-pointer">
-                {isInList ? <Check size={18} className="text-white" /> : <Plus size={18} className="text-white" strokeWidth={1.5} />}
-                <span className="text-[11px] text-white">Save</span>
-              </button>
+            <div className="flex items-center justify-between">
+              <ActionBtn 
+                icon={<ThumbsUp size={20} className={isLiked ? "text-cyan" : "text-white"} fill={isLiked ? "var(--color-cyan)" : "none"} strokeWidth={1.5} />}
+                label="83.4K"
+                onClick={() => toggleLike(selectedDrama.id)}
+              />
+              <ActionBtn 
+                icon={<Share2 size={20} className="text-white" strokeWidth={1.5} />}
+                label="Share"
+                onClick={() => {}}
+              />
+              <ActionBtn 
+                icon={<ListVideo size={20} className="text-white" strokeWidth={1.5} />}
+                label="Episodes"
+                onClick={() => setShowEpisodeSelector(true)}
+              />
+              <ActionBtn 
+                icon={isInList ? <Check size={20} className="text-cyan" /> : <Plus size={20} className="text-white" strokeWidth={1.5} />}
+                label="Save"
+                onClick={() => toggleMyList(selectedDrama.id)}
+              />
             </div>
           </div>
         </>
@@ -349,12 +407,18 @@ export default function PlayerScreen() {
       {/* Double-tap hearts */}
       <DoubleTapHeart hearts={hearts} />
 
-      {/* Subtitle */}
-      {isPlaying && (
-        <motion.div key={subtitleIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className={`absolute z-20 text-center pointer-events-none ${variant === 'V2' ? 'bottom-[180px] left-4 right-4' : 'bottom-[200px] left-8 right-16'}`}>
+      {/* Subtitle — only renders when CC is on. The line keyed by cc+index so
+          a language switch animates the new translation in. */}
+      {isPlaying && subtitlesOn && (
+        <motion.div
+          key={`${cc}-${subtitleIndex}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={`absolute z-20 text-center pointer-events-none ${variant === 'V2' ? 'bottom-[180px] left-4 right-4' : 'bottom-[200px] left-8 right-16'}`}
+        >
           <span className="text-[14px] font-medium text-white drop-shadow-lg bg-black/30 px-3 py-1 rounded-lg">
-            {subtitleLines[subtitleIndex]}
+            {subtitleTracks[cc]?.[subtitleIndex]}
           </span>
         </motion.div>
       )}
@@ -364,10 +428,34 @@ export default function PlayerScreen() {
         <Seekbar duration={15000} isPlaying={isPlaying} onComplete={handleSeekComplete} />
       </div>
 
-      <EpisodeSelector />
       <EpisodeTransition />
-      <PlayerSettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <FullPageAd ad={activeFullAd?.ad} onDismiss={handleFullAdDismiss} />
+      <PlayerSettingsSheet
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        audio={audio} onAudioChange={setAudio}
+        quality={quality} onQualityChange={setQuality}
+        speed={speed} onSpeedChange={setSpeed}
+      />
+      <FullPageAd
+        ad={adStreak ? adStreak.ads[adStreak.index] : null}
+        streakIndex={adStreak?.index ?? 0}
+        streakCount={adStreak?.ads.length ?? 1}
+        allowSkip={adStreak?.allowSkip ?? true}
+        allowReplay={adStreak?.allowReplay ?? true}
+        onSkip={advanceAdStreak}
+        onAutoFinish={advanceAdStreak}
+      />
     </div>
+  );
+}
+
+function ActionBtn({ icon, label, onClick }) {
+  return (
+    <button onClick={onClick} className="flex flex-col items-center gap-2 cursor-pointer group">
+      <div className="w-[48px] h-[48px] rounded-full bg-white/5 ring-1 ring-white/20 flex items-center justify-center transition-colors group-active:bg-white/10">
+        {icon}
+      </div>
+      <span className="text-[12px] text-white/90 font-medium">{label}</span>
+    </button>
   );
 }

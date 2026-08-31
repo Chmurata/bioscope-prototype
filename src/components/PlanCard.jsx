@@ -10,11 +10,11 @@ export default function PlanCard({ plan, selected, onSelect }) {
   const isPrimary = plan.variant === 'primary';
 
   const baseBg = isPrimary
-    ? 'bg-[linear-gradient(135deg,#1E2A6B_0%,#111A42_40%,#0A0F28_75%,#050813_100%)]'
-    : 'bg-[#1E2224]';
+    ? 'bg-[linear-gradient(135deg,rgb(30,42,107)_0%,rgb(17,26,66)_40%,rgb(10,15,40)_75%,rgb(5,8,19)_100%)]'
+    : 'bg-surface-alt';
 
   const ring = selected
-    ? 'ring-1 ring-[#00BBFF]/60 shadow-[0_0_0_1px_rgba(0,187,255,0.1),0_10px_30px_rgba(0,187,255,0.18)]'
+    ? 'ring-1 ring-cyan/60 shadow-[0_0_0_1px_rgba(0,187,255,0.1),0_10px_30px_rgba(0,187,255,0.18)]'
     : 'ring-1 ring-white/8';
 
   return (
@@ -36,7 +36,7 @@ export default function PlanCard({ plan, selected, onSelect }) {
               boxShadow: '-4px 2px 6px rgba(0,0,0,0.5)',
             }}
           >
-            <span className="text-[9px] font-medium text-[#25323D] whitespace-nowrap leading-none">
+            <span className="text-[10px] font-medium text-badge-ink whitespace-nowrap leading-none">
               {plan.badge}
             </span>
           </div>
@@ -61,8 +61,8 @@ export default function PlanCard({ plan, selected, onSelect }) {
       {/* Duration + Price row — Figma: duration 14/400/#D2D6DB, price 18/700/white */}
       <div className="flex items-center justify-between mt-2 mb-2">
         <div className="flex items-center gap-1.5">
-          <Clock size={14} className="text-[#D2D6DB]" strokeWidth={1.75} />
-          <span className="text-[14px] text-[#D2D6DB] font-normal leading-[20px]">{plan.duration}</span>
+          <Clock size={14} className="text-icon-subtle" strokeWidth={1.75} />
+          <span className="text-[14px] text-icon-subtle font-normal leading-[20px]">{plan.duration}</span>
         </div>
         <span className="text-[18px] font-bold text-white tabular-nums leading-[28px]">৳{plan.price}</span>
       </div>

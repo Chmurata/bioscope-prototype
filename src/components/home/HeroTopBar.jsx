@@ -4,7 +4,7 @@ import { Search, Crown } from 'lucide-react';
 // Sticky top bar for the home screen.
 // Background gradient blends from the current hero's tint color at the top to transparent below,
 // creating the "dominant color halo" effect seen in the Bioscope+ app.
-export default function HeroTopBar({ tint = '#3a2c2c', onSubscribe, onSearch }) {
+export default function HeroTopBar({ tint = 'rgb(58,44,44)', onSubscribe, onSearch }) {
   return (
     <div className="absolute top-0 left-0 right-0 z-20 pointer-events-none">
       {/* Tint gradient backdrop — 160px tall, fades to transparent */}

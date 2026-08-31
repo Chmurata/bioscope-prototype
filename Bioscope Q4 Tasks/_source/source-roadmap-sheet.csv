@@ -1,0 +1,47 @@
+Feature,Details,Key Capabilities,UI Required,Nusratech understanding based on meemnur bhai direction,UX Status
+Shorts Capability enhancement to accommodate partner (Microdrama),"> Convert Shorts from discovery‑only to monetizable content
+ > Enable Series‑based Shorts (episodic consumption)
+ > Enable TVOD (pay‑per‑short / pay‑per‑series)","> Shorts playlist & series mapping
+ > Unlock logic after free previews
+ > Checkout integration for shorts
+ > Shorts analytics (views, conversion, revenue) (matomo & mixpanel)  > Sample Api (Deeptoplay & Tapmad) > CA integration scope (tapmad)",Yes,,Done
+New Partner Integration (3 Partners),"Onboarding new OTT partners at scale
+ 
+ Partners Q2: Utshob, SRK, Tapmad","> Content ingestion
+ > DRM & entitlement mapping
+ > Reporting & settlement readiness",N/A,,N/A
+Play Journey Improvement,"Seamless transition from trailer → full content, Portrait Mode Content Play","> Auto‑play logic after trailer completion (Q4)
+ > Clear CTA for subscription if paywalled (Q4)
+ > Content Playable in Portriat Mode (Q3)
+ > Content preview before paywall (Preview as a Clip Type can be binded with a content), Preview Button",Yes,"> Currently content play occurs in landscape, need that in potrait mode as well like mygp sdk
+ > If user is already subscribed then trailer would not play , actual would play.(follow deepto journey)
+ > For unsubscribed user first trailer will play, then it will foward user to subscribe page(need RnD)
+ >  Watch preview where preview type of clip is attach with a content . gp will create clip and set first 5 mins free for that content. Then go to subscribe page for purchase.Preview will get higher priyority over trailer",WIP
+Pack page revamp,Improve how packs are presented & sold,"> Simplified pack comparison
+ > Highlight “Best Value” packs
+ > Content‑led pack messaging
+ > Clear entitlement visibility
+ > Data Pack Catalogue
+ > Pack Visibility in Content Details Page
+ > Compact Pack Page for Better Visibility",ref - https://www.jio.com/selfcare/plans/mobility/prepaid-plans-list/?category=Entertainment%20Plans&categoryId=RW50ZXJ0YWlubWVudCBQbGFucw==,After Wireframe get from GP will disscuss about this,Meem bhai will share related wireframe 
+"Digital Subscription Product Selling (Out of platform Product - Netflix, Prime)","Sell third‑party OTT subscriptions (OneGames, Netflix, Prime, etc.)","> Non‑streaming product catalog
+ > Purchase & entitlement management
+ > Voucher Delivery
+ > Disclosure & redirection flows
+ > Voucher Validity and Package Validity Separation
+ > Voucher Marketplace UI",ref-https://www.figma.com/design/o8cdupE6gPnXho8TDmt44B/Bioscope----Meemnur?node-id=99-342&t=xel7J2iDwdgqYNWg-0,"> Need a customization page - e.g Tapshop
+> Meem bhai will share wireframe figma
+> There will be a api or webhook which will send from vourchar partners . Meem bhai will share",
+Dynamic Discounting,Personalized & time‑bound pricing,"> Segment‑based offers
+ > Timer‑based discounts
+ > Campaign control pane",,"> Segment based coupon code
+> Timer based coupon activation visulization
+> Specific time wise visulizationlike 12.00 A.M to 2.00 AM",
+Monetization capability and Journey Enhancement,,"> Bioscope+ Autorenewal through POL (Q3)
+ > Discount & Voucher (Q2) - Sending SOL the Discount parameters during Order Submit
+ > Gifting Subscription",,"> SOL Submit order param ,will share updated document
+> SOL Submit order param ,will share updated document
+> Gift mechanism .e.g- Chorki",
+Monetization Capability,Monetization capability and Journey Enhancement,"> DOB (Q2) Done
+> One Tap Binding (Q2)
+> New One Tap Partner (Q2) Done",,,

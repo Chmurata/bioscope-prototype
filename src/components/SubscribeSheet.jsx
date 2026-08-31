@@ -58,7 +58,7 @@ export default function SubscribeSheet({ open, onClose }) {
           <div className="absolute inset-0 bg-black/80" onClick={close} />
 
           <motion.div
-            className="absolute bottom-0 left-0 right-0 bg-[#0A090B] rounded-t-[20px] overflow-hidden h-[95%] flex flex-col ring-1 ring-white/5"
+            className="absolute bottom-0 left-0 right-0 bg-dark rounded-t-[20px] overflow-hidden h-[95%] flex flex-col ring-1 ring-white/5"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -79,10 +79,10 @@ export default function SubscribeSheet({ open, onClose }) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-8">
-                  <h1 className="text-[26px] font-bold text-white mb-5">Choose Your Plan</h1>
+                  <h1 className="text-[24px] font-bold text-white mb-5">Choose Your Plan</h1>
 
                   {/* Flexiplan hero — Figma: 328×122 card, #212628/#373A3D 1px, r16, p16, gap 16 */}
-                  <div className="rounded-[16px] bg-[#212628] ring-1 ring-[#373A3D] p-4 mb-3 flex flex-col gap-4">
+                  <div className="rounded-[16px] bg-surface-alt ring-1 ring-[#373A3D] p-4 mb-3 flex flex-col gap-4">
                     <div className="flex items-start gap-4">
                       <img src={crownIcon} alt="" className="w-[44px] h-[44px] shrink-0" />
                       <div className="flex-1 min-w-0">
@@ -92,8 +92,8 @@ export default function SubscribeSheet({ open, onClose }) {
                     </div>
                     {/* Create Package — Figma: h30, r8, bg white, 12/500/#2A2A2A, plus 16×16 #2A2A2A, gap 8 */}
                     <button className="w-full h-[30px] bg-white rounded-[8px] flex items-center justify-center gap-2 cursor-pointer">
-                      <Plus size={16} strokeWidth={2} className="text-[#2A2A2A]" />
-                      <span className="text-[12px] font-medium text-[#2A2A2A] leading-[18px]">{FLEXIPLAN.cta}</span>
+                      <Plus size={16} strokeWidth={2} className="text-[#2a2a2a]" />
+                      <span className="text-[12px] font-medium text-[#2a2a2a] leading-[18px]">{FLEXIPLAN.cta}</span>
                     </button>
                   </div>
 
@@ -134,15 +134,15 @@ export default function SubscribeSheet({ open, onClose }) {
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6">
-                  <h1 className="text-[26px] font-bold text-white mb-5">Checkout</h1>
+                  <h1 className="text-[24px] font-bold text-white mb-5">Checkout</h1>
 
                   {/* Plan summary card — mirrors the selected plan's look */}
-                  <div className="rounded-[16px] bg-[#1E2224] ring-1 ring-white/8 px-4 pt-4 pb-4 mb-5">
+                  <div className="rounded-[16px] bg-surface-alt ring-1 ring-white/8 px-4 pt-4 pb-4 mb-5">
                     <h3 className="text-[20px] font-bold text-white leading-tight mb-3">{selectedPlan.title}</h3>
 
                     <div className="flex items-center gap-1.5 mb-3">
                       <Clock size={14} className="text-white/85" strokeWidth={2} />
-                      <span className="text-[13px] text-white/85 font-medium">{selectedPlan.duration}</span>
+                      <span className="text-[12px] text-white/85 font-medium">{selectedPlan.duration}</span>
                     </div>
 
                     <p className="text-[12px] text-white/70 mb-3 leading-snug">{selectedPlan.subtitle}</p>
@@ -163,10 +163,10 @@ export default function SubscribeSheet({ open, onClose }) {
                   </div>
 
                   {/* Select Payment Method — collapsed row */}
-                  <h4 className="text-[15px] font-bold text-white mb-3">Select Payment Method</h4>
+                  <h4 className="text-[14px] font-bold text-white mb-3">Select Payment Method</h4>
                   <button
                     onClick={() => setStage('payment')}
-                    className="w-full flex items-center gap-2 rounded-[10px] bg-transparent ring-1 ring-[#00BBFF] px-3 py-3 mb-6 cursor-pointer"
+                    className="w-full flex items-center gap-2 rounded-[10px] bg-transparent ring-1 ring-cyan px-3 py-3 mb-6 cursor-pointer"
                   >
                     <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-hidden">
                       {PAYMENT_PREVIEW.map((p, i) => (
@@ -185,20 +185,20 @@ export default function SubscribeSheet({ open, onClose }) {
                         </div>
                       ))}
                     </div>
-                    <div className="w-[20px] h-[20px] rounded-full bg-[#00BBFF] flex items-center justify-center shrink-0">
-                      <Check size={12} className="text-[#0A090B]" strokeWidth={3} />
+                    <div className="w-[20px] h-[20px] rounded-full bg-cyan flex items-center justify-center shrink-0">
+                      <Check size={12} className="text-dark" strokeWidth={3} />
                     </div>
                   </button>
                 </div>
 
                 {/* Sticky amount + continue */}
-                <div className="shrink-0 bg-[#212628]">
+                <div className="shrink-0 bg-surface-alt">
                   <div className="flex flex-col gap-3 px-3 py-3">
                     {/* Amount Payable row */}
                     <div className="flex items-center justify-between">
                       <span className="text-[14px] font-bold text-white leading-[20px]">Amount Payable</span>
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-[14px] font-light text-[#9DA4AE] line-through tabular-nums leading-[20px]">
+                        <span className="text-[14px] font-light text-outline-light line-through tabular-nums leading-[20px]">
                           ৳{Math.round(selectedPlan.price * 1.5)}
                         </span>
                         <span className="text-[14px] font-bold text-white tabular-nums leading-[20px]">
@@ -211,12 +211,12 @@ export default function SubscribeSheet({ open, onClose }) {
                       onClick={() => setStage('payment')}
                       className="w-full h-[40px] bg-white rounded-[8px] flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span className="text-[14px] font-medium text-[#2A2A2A] leading-[20px]">Proceed to Payment</span>
-                      <ArrowRight size={16} strokeWidth={2} className="text-[#2A2A2A]" />
+                      <span className="text-[14px] font-medium text-[#2a2a2a] leading-[20px]">Proceed to Payment</span>
+                      <ArrowRight size={16} strokeWidth={2} className="text-[#2a2a2a]" />
                     </button>
                     {/* Terms — Figma: 10/400 centered */}
-                    <p className="text-[10px] font-normal text-[#9DA4AE] text-center leading-[14px]">
-                      By continuing you are agreeing to our <span className="text-[#00BBFF]">Terms & condition</span>
+                    <p className="text-[10px] font-normal text-outline-light text-center leading-[14px]">
+                      By continuing you are agreeing to our <span className="text-cyan">Terms & condition</span>
                     </p>
                   </div>
                 </div>
@@ -227,7 +227,7 @@ export default function SubscribeSheet({ open, onClose }) {
             {stage === 'payment' && (
               <div className="flex-1 flex flex-col overflow-hidden bg-white">
                 {/* Header — kept dark */}
-                <div className="flex items-center gap-3 px-4 pt-5 pb-4 shrink-0 bg-[#0A090B]">
+                <div className="flex items-center gap-3 px-4 pt-5 pb-4 shrink-0 bg-dark">
                   <button
                     onClick={() => setStage('checkout')}
                     className="w-[28px] h-[28px] flex items-center justify-center cursor-pointer"
@@ -246,12 +246,12 @@ export default function SubscribeSheet({ open, onClose }) {
                 <div className="shrink-0 bg-white px-4 pt-3 pb-5 border-t border-black/5">
                   <button
                     onClick={handlePay}
-                    className="w-full h-[40px] bg-white ring-1 ring-[#D2D6DB] rounded-[8px] flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full h-[40px] bg-white ring-1 ring-icon-subtle rounded-[8px] flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span className="text-[14px] font-medium text-[#2A2A2A] leading-[20px]">
+                    <span className="text-[14px] font-medium text-[#2a2a2a] leading-[20px]">
                       Continue to pay ৳{selectedPlan.price}
                     </span>
-                    <ArrowRight size={16} strokeWidth={2} className="text-[#2A2A2A]" />
+                    <ArrowRight size={16} strokeWidth={2} className="text-[#2a2a2a]" />
                   </button>
                 </div>
               </div>
@@ -261,9 +261,9 @@ export default function SubscribeSheet({ open, onClose }) {
             {stage === 'processing' && (
               <div className="flex-1 flex flex-col items-center justify-center px-5">
                 <div className="relative">
-                  <div className="w-[56px] h-[56px] rounded-full border-[3px] border-[#00BBFF]/20 border-t-[#00BBFF] animate-spin" />
+                  <div className="w-[56px] h-[56px] rounded-full border-[3px] border-cyan/20 border-t-cyan animate-spin" />
                 </div>
-                <p className="text-[15px] font-semibold text-white mt-5">Processing payment…</p>
+                <p className="text-[14px] font-semibold text-white mt-5">Processing payment…</p>
                 <p className="text-[12px] text-white/55 mt-1">Securing your subscription</p>
               </div>
             )}
@@ -275,34 +275,34 @@ export default function SubscribeSheet({ open, onClose }) {
                   initial={{ scale: 0, rotate: -15 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', damping: 12, stiffness: 200 }}
-                  className="relative w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#73F5FD] to-[#00BBFF] flex items-center justify-center shadow-[0_10px_32px_rgba(0,187,255,0.55)]"
+                  className="relative w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#73F5FD] to-cyan flex items-center justify-center shadow-[0_10px_32px_rgba(0,187,255,0.55)]"
                 >
-                  <Crown size={40} className="text-[#0A090B]" fill="#0A090B" strokeWidth={2} />
+                  <Crown size={40} className="text-dark" fill="#0A090B" strokeWidth={2} />
                   <motion.div
                     className="absolute inset-0 rounded-full ring-2 ring-[#73F5FD]/60"
                     animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
                     transition={{ duration: 1.2, repeat: Infinity }}
                   />
                 </motion.div>
-                <h3 className="text-[22px] font-bold text-white mt-5">You're Premium!</h3>
-                <p className="text-[13px] text-white/60 mt-1.5 text-center max-w-[280px]">
+                <h3 className="text-[20px] font-bold text-white mt-5">You're Premium!</h3>
+                <p className="text-[12px] text-white/60 mt-1.5 text-center max-w-[280px]">
                   {selectedPlan.title} is active. All microdramas unlocked — ad-free, HD, downloadable.
                 </p>
 
-                <div className="w-full mt-6 rounded-[12px] bg-[#1E2224] ring-1 ring-white/8 px-4 py-3 space-y-2">
+                <div className="w-full mt-6 rounded-[12px] bg-surface-alt ring-1 ring-white/8 px-4 py-3 space-y-2">
                   {['Ad-free playback', 'Full HD + multi-audio', 'Offline downloads'].map((perk) => (
                     <div key={perk} className="flex items-center gap-2.5">
                       <div className="w-[18px] h-[18px] rounded-full bg-[#00DF00]/20 flex items-center justify-center">
                         <Check size={11} className="text-[#00DF00]" strokeWidth={3} />
                       </div>
-                      <span className="text-[13px] text-white/90">{perk}</span>
+                      <span className="text-[12px] text-white/90">{perk}</span>
                     </div>
                   ))}
                 </div>
 
                 <button
                   onClick={close}
-                  className="w-full mt-6 bg-white text-[#0A090B] font-semibold text-[15px] rounded-full py-3.5 cursor-pointer"
+                  className="w-full mt-6 bg-white text-dark font-semibold text-[14px] rounded-full py-3.5 cursor-pointer"
                 >
                   Start watching
                 </button>

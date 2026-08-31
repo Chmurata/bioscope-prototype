@@ -1,54 +1,174 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp, SCREENS } from '../contexts/AppContext';
-import { dramas } from '../data/dramas';
-import { Settings, X } from 'lucide-react';
+import { content } from '../data/content';
+import { demoLocker } from '../data/vouchers';
+import { Settings, X, RotateCcw } from 'lucide-react';
 
-const screenButtons = [
-  { label: 'Home', screen: SCREENS.HOME },
-  { label: 'Browse', screen: SCREENS.BROWSE },
-  { label: 'Player', screen: SCREENS.PLAYER },
-];
+/**
+ * Demo panel. Organised as FLOWS, not as spec IDs — each button sets up all the
+ * state a scenario needs and drops you at its starting screen, with a plain
+ * description of what you are about to see.
+ *
+ * Scoped to the Q4 work only. Microdrama, Shorts and Live TV are out of scope
+ * and deliberately absent.
+ */
 
-const variantSections = [
-  { key: 'browse', label: 'Browse Layout', options: ['V1', 'V2', 'V3'], descriptions: ['Grid', 'Featured', 'List'] },
-  { key: 'detail', label: 'Detail Sheet', options: ['V1', 'V2', 'V3'], descriptions: ['Standard', 'Full', 'Cards'] },
-  { key: 'player', label: 'Player Style', options: ['V1', 'V2', 'V3'], descriptions: ['TikTok', 'YT Shorts', 'Minimal'] },
-  { key: 'episodeSelector', label: 'Episode Selector', options: ['V1', 'V2', 'V3'], descriptions: ['Grid', 'Dots', 'Thumbs'] },
-];
+const find = (id) => content.find((c) => c.id === id);
+
+const buildGroups = (a) => [
+    {
+      group: 'Watching & paying',
+      flows: [
+        { title: 'Free film — just plays',
+          desc: 'Wicked. Not paywalled, so Play Now starts the feature.',
+          go: () => a.openContent('wicked') },
+        { title: 'Preview, then paywall',
+          desc: 'Seoul Vibe. Free preview runs, warns near the end, then asks you to subscribe or rent.',
+          go: () => a.openContent('seoul-vibe') },
+        { title: 'Trailer, then paywall',
+          desc: 'The Bike Riders. No preview exists, so the trailer plays and the paywall follows it.',
+          go: () => a.openContent('bike-riders') },
+        { title: 'Nothing to play',
+          desc: 'Love Rosie. Locked with no preview and no trailer — paywall opens straight from the page.',
+          go: () => a.openContent('love-rosie') },
+        { title: 'Subscribe or rent',
+          desc: 'Seoul Vibe with the paywall already open. Rent is ৳99 for 48 hours; subscribing unlocks everything.',
+          go: () => { const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Subscribe-only title',
+          desc: 'Nishiddho cannot be rented, so the paywall shows a single CTA.',
+          go: () => { const c = find('bangla-original'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Already subscribed',
+          desc: 'Same film, but you hold the Standard pack — it plays with no trailer and no paywall.',
+          go: () => { a.setSubscription({ packId: 'standard', expiresLabel: 'Expires 12 Sep' }); a.openContent('seoul-vibe'); } },
+        { title: 'Full screen',
+          desc: 'Player rotated to landscape.',
+          go: () => { a.setOrientation('landscape'); a.openContent('seoul-vibe'); } },
+      ],
+    },
+    {
+      group: 'Choosing a pack',
+      flows: [
+        { title: 'Browse all packs',
+          desc: '12 packs. Filter by how long they last and which platforms they cover.',
+          go: () => a.setScreen(SCREENS.PACK_CATALOGUE) },
+        { title: 'A pack you cannot buy',
+          desc: 'Family + 5GB is Skitto-only. It stays visible with the requirement stated and no button.',
+          go: () => a.setScreen(SCREENS.PACK_CATALOGUE) },
+        { title: 'What I am subscribed to',
+          desc: 'Your pack, what it covers, when it ends, and whether it renews.',
+          go: () => { a.setSubscription({ packId: 'duo-binge', expiresLabel: 'Expires 20 Sep' }); a.setShowMySubscriptions(true); } },
+      ],
+    },
+    {
+      group: 'Paying with mobile balance',
+      flows: [
+        { title: 'Pay from mobile balance',
+          desc: 'Number, then OTP, with the spending limits shown. Any valid number works — try 01711092617.',
+          go: () => { const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Monthly limit used up',
+          desc: 'Same flow — enter 01799999999 at the number step. A hard stop; topping up will not help.',
+          go: () => { const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Operator declined',
+          desc: 'Same flow — enter 01788888888. Retryable, unlike the limit case.',
+          go: () => { const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Number not recognised',
+          desc: 'Mobile balance disappears from the payment list entirely.',
+          go: () => { a.setCarrierKnown(false); const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+        { title: 'Pack that cannot use balance',
+          desc: 'Filter to 1 Year. Annual packs drop mobile balance from checkout.',
+          go: () => a.setScreen(SCREENS.PACK_CATALOGUE) },
+      ],
+    },
+    {
+      group: 'Vouchers',
+      flows: [
+        { title: 'Buy a Netflix voucher',
+          desc: 'Shop, product, disclosure, payment, then the code.',
+          go: () => a.setScreen(SCREENS.VOUCHER_STORE) },
+        { title: 'My vouchers',
+          desc: 'Three at once — one unused, one redeemed and running, one that expired unused.',
+          go: () => { a.setOwnedVouchers(demoLocker); a.setShowMySubscriptions(true); } },
+        { title: 'No vouchers yet',
+          desc: 'The empty locker.',
+          go: () => { a.setOwnedVouchers([]); a.setShowMySubscriptions(true); } },
+      ],
+    },
+    {
+      group: 'Offers & discounts',
+      flows: [
+        { title: 'Discount for your operator',
+          desc: 'Standard shows 20% off because you are on Grameenphone.',
+          go: () => { a.setActiveCampaign({ packId: 'standard', type: 'segment', label: 'GP Users save 20%', discount: 20 }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+        { title: 'Flash sale, ticking',
+          desc: 'Duo Binge, 10 minutes on the clock.',
+          go: () => { a.setActiveCampaign({ packId: 'duo-binge', type: 'timer', label: 'Flash Sale', discount: 30, expiresAt: Date.now() + 600000 }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+        { title: 'Sale ends while you are paying',
+          desc: 'A flash sale that expires one second from now, mid-checkout.',
+          go: () => { a.setActiveCampaign({ packId: 'duo-binge', type: 'timer', label: 'Flash Sale', discount: 30, expiresAt: Date.now() + 1000 }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+        { title: 'Late-night offer — starts later',
+          desc: 'Midnight deal not open yet. Shown, but the price has not dropped.',
+          go: () => { a.setActiveCampaign({ packId: 'super', type: 'window', windowState: 'upcoming', label: 'Midnight offer', discount: 25, windowLabel: '12:00 AM – 2:00 AM' }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+        { title: 'Late-night offer — live now',
+          desc: 'Inside its hours, so the discount applies.',
+          go: () => { a.setActiveCampaign({ packId: 'super', type: 'window', windowState: 'active', label: 'Midnight offer', discount: 25, windowLabel: '12:00 AM – 2:00 AM' }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+        { title: 'Late-night offer — over',
+          desc: 'Window closed. Badge greys out and the full price returns.',
+          go: () => { a.setActiveCampaign({ packId: 'super', type: 'window', windowState: 'ended', label: 'Midnight offer', discount: 25, windowLabel: '12:00 AM – 2:00 AM' }); a.setScreen(SCREENS.PACK_CATALOGUE); } },
+      ],
+    },
+  ];
+
 
 export default function ControlPanel() {
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    screen, setScreen,
-    selectedDrama, setSelectedDrama,
-    currentEpisode, setCurrentEpisode,
-    setIsPlaying, setShowDetail, setShowEpisodeSelector, setShowTransition,
-    variants, setVariant,
-    userState, setUserState,
-  } = useApp();
+  const [lastRun, setLastRun] = useState(null);
 
-  const jumpToScreen = (s) => {
-    if (s === SCREENS.PLAYER && !selectedDrama) {
-      setSelectedDrama(dramas[0]);
-    }
-    setShowDetail(false);
-    setShowEpisodeSelector(false);
-    setShowTransition(false);
-    setScreen(s);
+  const app = useApp();
+  const {
+    setScreen, setSelectedDrama, selectedDrama,
+    subscription, setSubscription, setRentals,
+    setCarrierKnown, setOrientation,
+    setPaywallContext, setShowMySubscriptions,
+    setActiveCampaign, setOwnedVouchers,
+  } = app;
+
+  // Every flow starts from a known-clean state so scenarios never bleed together.
+  const base = () => {
+    setPaywallContext(null);
+    setShowMySubscriptions(false);
+    setActiveCampaign(null);
+    setRentals([]);
+    setSubscription(null);
+    setCarrierKnown(true);
+    setOrientation('portrait');
   };
+
+  const run = (flow) => {
+    base();
+    flow.go();
+    setLastRun(flow.title);
+  };
+
+  const openContent = (id) => {
+    setSelectedDrama(find(id));
+    setScreen(SCREENS.CONTENT_DETAIL);
+  };
+
+  const GROUPS = buildGroups({ openContent, setSelectedDrama, setScreen, setPaywallContext, setSubscription, setOrientation, setShowMySubscriptions, setOwnedVouchers, setActiveCampaign, setCarrierKnown });
+
+  const reset = () => { base(); setOwnedVouchers(demoLocker); setSelectedDrama(null); setScreen(SCREENS.HOME); setLastRun(null); };
 
   return (
     <>
-      {/* Floating toggle button — outside phone frame */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-5 right-5 z-[9999] w-[44px] h-[44px] rounded-full bg-accent shadow-lg flex items-center justify-center cursor-pointer hover:bg-accent-light transition-colors"
+        className="fixed top-5 right-5 z-[9999] h-[36px] px-3 rounded-full bg-accent shadow-lg flex items-center gap-1.5 cursor-pointer hover:bg-accent-light transition-colors"
       >
-        {isOpen ? <X size={20} className="text-white" /> : <Settings size={20} className="text-white" />}
+        {isOpen ? <X size={16} className="text-white" /> : <Settings size={16} className="text-white" />}
+        <span className="text-[11px] font-bold text-white tracking-wide">DEMO</span>
       </button>
 
-      {/* Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -56,132 +176,47 @@ export default function ControlPanel() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-16 right-5 z-[9998] w-[280px] max-h-[calc(100vh-100px)] overflow-y-auto no-scrollbar bg-[#1e2028] border border-[#2e3038] rounded-xl shadow-2xl"
+            className="fixed top-16 right-5 z-[9998] w-[330px] max-h-[calc(100vh-100px)] overflow-y-auto no-scrollbar bg-card border border-[#2e3038] rounded-xl shadow-2xl"
           >
             <div className="p-4">
-              <h3 className="text-[14px] font-bold text-white mb-4">Demo Control Panel</h3>
-
-              {/* Screen Navigation */}
-              <div className="mb-5">
-                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Navigate</span>
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  {screenButtons.map((btn) => (
-                    <button
-                      key={btn.label}
-                      onClick={() => jumpToScreen(btn.screen)}
-                      className={`px-3 py-1.5 rounded-md text-[11px] font-medium cursor-pointer transition-colors ${
-                        screen === btn.screen
-                          ? 'bg-accent text-white'
-                          : 'bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]'
-                      }`}
-                    >
-                      {btn.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  <button
-                    onClick={() => { if (!selectedDrama) setSelectedDrama(dramas[0]); setShowDetail(true); }}
-                    className="px-3 py-1.5 rounded-md text-[11px] font-medium cursor-pointer bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]"
-                  >
-                    Detail Sheet
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!selectedDrama) setSelectedDrama(dramas[0]);
-                      if (screen !== SCREENS.PLAYER) setScreen(SCREENS.PLAYER);
-                      setShowEpisodeSelector(true);
-                    }}
-                    className="px-3 py-1.5 rounded-md text-[11px] font-medium cursor-pointer bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]"
-                  >
-                    Episode Selector
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!selectedDrama) setSelectedDrama(dramas[0]);
-                      if (screen !== SCREENS.PLAYER) setScreen(SCREENS.PLAYER);
-                      setShowTransition(true);
-                    }}
-                    className="px-3 py-1.5 rounded-md text-[11px] font-medium cursor-pointer bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]"
-                  >
-                    Transition
-                  </button>
-                </div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-[13px] font-bold text-white">Pick a flow</h3>
+                <button onClick={reset} className="flex items-center gap-1 text-[10px] text-text-muted hover:text-white cursor-pointer">
+                  <RotateCcw size={11} /> Start over
+                </button>
               </div>
 
-              {/* Variant Sections */}
-              {variantSections.map((sec) => (
-                <div key={sec.key} className="mb-4">
-                  <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{sec.label}</span>
-                  <div className="flex gap-1.5 mt-2">
-                    {sec.options.map((opt, i) => (
+              <div className="mb-4 rounded-lg bg-black/30 px-3 py-2">
+                <p className="text-[10px] text-text-muted leading-relaxed">
+                  {lastRun
+                    ? <>Showing <span className="text-white font-semibold">{lastRun}</span>{selectedDrama ? <> · {selectedDrama.title}</> : null}{subscription ? <> · subscribed</> : <> · not subscribed</>}</>
+                    : 'Nothing running. Pick a flow below and it will set everything up and take you there.'}
+                </p>
+              </div>
+
+              {GROUPS.map((g) => (
+                <div key={g.group} className="mb-5">
+                  <span className="text-[10px] font-bold text-accent uppercase tracking-[0.1em] block mb-2">{g.group}</span>
+                  <div className="flex flex-col gap-1.5">
+                    {g.flows.map((f) => (
                       <button
-                        key={opt}
-                        onClick={() => setVariant(sec.key, opt)}
-                        className={`flex-1 px-2 py-1.5 rounded-md text-[10px] font-medium cursor-pointer transition-colors ${
-                          variants[sec.key] === opt
-                            ? 'bg-accent text-white'
-                            : 'bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]'
+                        key={f.title}
+                        onClick={() => run(f)}
+                        className={`text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                          lastRun === f.title ? 'bg-accent' : 'bg-[#2a2d36] hover:bg-[#33363f]'
                         }`}
                       >
-                        {sec.descriptions[i]}
+                        <span className={`block text-[12px] font-semibold ${lastRun === f.title ? 'text-white' : 'text-white/90'}`}>
+                          {f.title}
+                        </span>
+                        <span className={`block text-[10px] leading-snug mt-0.5 ${lastRun === f.title ? 'text-white/75' : 'text-text-muted'}`}>
+                          {f.desc}
+                        </span>
                       </button>
                     ))}
                   </div>
                 </div>
               ))}
-
-              {/* Divider */}
-              <div className="h-px bg-border my-3" />
-
-              {/* State Controls */}
-              <div className="mb-4">
-                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Drama</span>
-                <select
-                  value={selectedDrama?.id || ''}
-                  onChange={(e) => {
-                    const d = dramas.find(d => d.id === Number(e.target.value));
-                    if (d) setSelectedDrama(d);
-                  }}
-                  className="mt-2 w-full bg-[#2a2d36] text-text-secondary text-[11px] rounded-md px-2 py-1.5 border-none outline-none"
-                >
-                  <option value="">Select drama...</option>
-                  {dramas.map(d => (
-                    <option key={d.id} value={d.id}>{d.title}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="mb-4">
-                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Episode: {currentEpisode}</span>
-                <input
-                  type="range"
-                  min={1}
-                  max={selectedDrama?.totalEpisodes || 73}
-                  value={currentEpisode}
-                  onChange={(e) => setCurrentEpisode(Number(e.target.value))}
-                  className="mt-2 w-full accent-accent"
-                />
-              </div>
-
-              <div className="mb-2">
-                <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">User State</span>
-                <div className="flex gap-2 mt-2">
-                  {['new', 'returning'].map((state) => (
-                    <button
-                      key={state}
-                      onClick={() => setUserState(state)}
-                      className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium cursor-pointer capitalize transition-colors ${
-                        userState === state
-                          ? 'bg-accent text-white'
-                          : 'bg-[#2a2d36] text-text-secondary hover:bg-[#33363f]'
-                      }`}
-                    >
-                      {state}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </motion.div>
         )}

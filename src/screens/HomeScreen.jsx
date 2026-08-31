@@ -29,7 +29,7 @@ export default function HomeScreen() {
   }, [playDrama]);
 
   return (
-    <div className="relative w-full h-full bg-[#0A090B] overflow-hidden">
+    <div className="relative w-full h-full bg-dark overflow-hidden">
       <HeroTopBar tint={heroTint} onSubscribe={() => setShowSubscribe(true)} />
 
       <div className="relative w-full h-full overflow-y-auto no-scrollbar pb-[90px]">

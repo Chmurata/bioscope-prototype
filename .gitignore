@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Q4 source media (large mp4s / raw video) — kept locally only
+Bioscope Q4 Tasks/media/

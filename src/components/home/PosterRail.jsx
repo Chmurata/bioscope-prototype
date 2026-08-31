@@ -1,6 +1,7 @@
 import SectionHeader from './SectionHeader';
 import { ContentLabel } from '../ContentLabel';
 import { OTT_LOGOS } from '../../assets/ott-logos';
+import WatchedBadge from '../episode/WatchedBadge';
 
 // Platform key → real OTT logo. Replaces the previous CSS text-tile fallbacks.
 const PLATFORM_LOGOS = {
@@ -42,7 +43,7 @@ function BottomLabel({ label }) {
 
 // Horizontal scrollable rail.
 // variant: 'portrait' (standard) | 'landscape' (16:9) | 'numbered' (top-10 style with large numeral)
-export default function PosterRail({ title, items, variant = 'portrait', seeAll = true, onSeeAll }) {
+export default function PosterRail({ title, items, variant = 'portrait', seeAll = true, onSeeAll, onItemClick }) {
   const config = {
     portrait:  { w: 128, h: 180, titleSize: 12 },
     landscape: { w: 160, h: 200, titleSize: 12 },
@@ -59,7 +60,12 @@ export default function PosterRail({ title, items, variant = 'portrait', seeAll 
         style={{ paddingLeft: variant === 'numbered' ? 70 : 16 }}
       >
         {items.map((it, i) => (
-          <div key={it.id} className="shrink-0" style={{ width: config.w }}>
+          <div
+            key={it.id}
+            onClick={onItemClick ? () => onItemClick(it) : undefined}
+            className={`shrink-0 ${onItemClick ? 'cursor-pointer' : ''}`}
+            style={{ width: config.w }}
+          >
             <div className="relative" style={{ width: config.w, height: config.h }}>
               {variant === 'numbered' && (
                 <span
@@ -75,8 +81,13 @@ export default function PosterRail({ title, items, variant = 'portrait', seeAll 
                   {i + 1}
                 </span>
               )}
-              <div className="relative z-10 rounded-[8px] overflow-hidden bg-[#1E2224] w-full h-full">
-                <img src={it.poster} alt="" className="w-full h-full object-cover" />
+              <div className="relative z-10 rounded-[8px] overflow-hidden bg-surface-dark w-full h-full">
+                <img
+                  src={it.poster}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+                {it.watched && <div className="absolute inset-0 bg-black/55 pointer-events-none" />}
                 {it.platform && <PlatformTile platform={it.platform} />}
                 {it.chip && <ContentLabel label={it.chip} position="tr" />}
                 {variant === 'landscape' && it.overlay && (
@@ -91,6 +102,18 @@ export default function PosterRail({ title, items, variant = 'portrait', seeAll 
                   </>
                 )}
                 {it.bottomLabel && !it.overlay && <BottomLabel label={it.bottomLabel} />}
+
+                {/* Watched / in-progress treatments (Continue Watching rail). */}
+                {it.watched && (
+                  <div className="absolute bottom-1.5 right-1.5 z-10">
+                    <WatchedBadge />
+                  </div>
+                )}
+                {!it.watched && typeof it.progressPct === 'number' && it.progressPct > 0 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/15">
+                    <div className="h-full" style={{ width: `${it.progressPct}%`, background: '#46ffff' }} />
+                  </div>
+                )}
               </div>
             </div>
             <p className="text-[13px] font-medium text-white mt-2 truncate" style={{ fontSize: config.titleSize }}>{it.title}</p>
