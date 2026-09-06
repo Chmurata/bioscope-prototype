@@ -65,9 +65,9 @@ export const homeRows = [
     title: 'Breaking News',
     seeAll: true,
     items: [
-      { id: 'bn-1', title: 'Breaking News',   poster: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '09.00 AM | 22-04-2026' },
-      { id: 'bn-2', title: 'Breaking News',   poster: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '07.00 AM | 22-04-2026' },
-      { id: 'bn-3', title: 'Morning Bulletin', poster: 'https://images.unsplash.com/photo-1586339949216-35c2747cc36d?w=800&h=450&fit=crop', chip: 'Exclusive', platform: 'deepto', overlay: 'সকালের ২১ এপ্রিল' },
+      { id: 'bn-1', title: 'Breaking News',   poster: LIVETV.channelI, chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '09.00 AM | 22-04-2026' },
+      { id: 'bn-2', title: 'Breaking News',   poster: LIVETV.dangalTv, chip: 'Exclusive', platform: 'iscreen', overlay: 'BREAKING NEWS', timestamp: '07.00 AM | 22-04-2026' },
+      { id: 'bn-3', title: 'Morning Bulletin', poster: LIVETV.deeptoTv, chip: 'Exclusive', platform: 'deepto', overlay: 'সকালের ২১ এপ্রিল' },
     ],
   },
   {
@@ -76,9 +76,9 @@ export const homeRows = [
     title: 'Recommended For You',
     seeAll: false,
     items: [
-      { id: 'rec-1', title: 'Coming Soon',   poster: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&h=450&fit=crop', bottomLabel: 'Coming Soon' },
-      { id: 'rec-2', title: 'Latest Trailer',poster: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=450&fit=crop', bottomLabel: 'Trailer' },
-      { id: 'rec-3', title: 'Up Next',       poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&h=450&fit=crop', bottomLabel: 'Trailer' },
+      { id: 'rec-1', title: 'Coming Soon',   poster: POSTERS.valathu, bottomLabel: 'Coming Soon' },
+      { id: 'rec-2', title: 'Latest Trailer',poster: POSTERS.jazzCity, bottomLabel: 'Trailer' },
+      { id: 'rec-3', title: 'Up Next',       poster: POSTERS.mnemonic, bottomLabel: 'Trailer' },
     ],
   },
   {

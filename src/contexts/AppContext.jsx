@@ -18,7 +18,9 @@ export const SCREENS = {
   PLAYER: 'player',
   CONTENT_DETAIL: 'content-detail',
   PACK_CATALOGUE: 'pack-catalogue',
-  VOUCHER_STORE: 'voucher-store'
+  VOUCHER_STORE: 'voucher-store',
+  PROFILE: 'profile',
+  PAYMENT: 'payment'
 };
 
 const DEFAULT_VARIANTS = {
@@ -39,6 +41,7 @@ export function AppProvider({ children }) {
   
   // Vouchers state
   const [ownedVouchers, setOwnedVouchers] = useState(demoLocker);
+  const [voucherTab, setVoucherTab] = useState('store'); // 'store' | 'mine'
   const [showTransition, setShowTransition] = useState(false);
   const [liked, setLiked] = useState({});
   const [myList, setMyList] = useState({});
@@ -168,6 +171,7 @@ export function AppProvider({ children }) {
     showMySubscriptions, setShowMySubscriptions,
     activeCampaign, setActiveCampaign,
     ownedVouchers, setOwnedVouchers,
+    voucherTab, setVoucherTab,
     liked, toggleLike, ensureLiked,
     myList, toggleMyList,
     variants, setVariant,

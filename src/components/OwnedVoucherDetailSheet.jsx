@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Copy, ExternalLink, ShieldAlert, Timer, X } from 'lucide-react';
+import { ArrowLeft, Check, Copy, ExternalLink, ShieldAlert, Timer, X } from 'lucide-react';
 import { vouchers } from '../data/vouchers';
+import VoucherBrandMark from './VoucherBrandMark';
 
 export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
   const [stage, setStage] = useState('detail'); // detail, handoff
@@ -22,7 +23,8 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
   const isExpired = voucherInstance.state === 'expired';
 
   const calculateDaysLeft = (targetDate) => {
-    const diff = targetDate - Date.now();
+    const diff = new Date(targetDate).getTime() - Date.now();
+    if (Number.isNaN(diff)) return 0;
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   };
 
@@ -70,9 +72,7 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
                 
                 {/* Header Info */}
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-[64px] h-[64px] bg-white rounded-[12px] flex items-center justify-center shrink-0 shadow-lg">
-                    <span className="text-[13px] font-bold text-black">{product.brand}</span>
-                  </div>
+                  <VoucherBrandMark brand={product.brand} logo={product.logo} size={64} radius={12} className="shadow-lg" />
                   <div>
                     <h2 className="text-[18px] font-bold text-white mb-1">{product.product}</h2>
                     <span className="text-[13px] text-white/60">Bought {new Date(voucherInstance.purchasedAt).toLocaleDateString()}</span>
@@ -170,9 +170,7 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
                   <div className="flex-1 h-px bg-white/20 relative">
                     <div className="absolute right-0 -top-[4px] w-[8px] h-[8px] border-t border-r border-white/20 rotate-45" />
                   </div>
-                  <div className="w-[48px] h-[48px] rounded-full bg-white flex items-center justify-center shrink-0">
-                    <span className="text-[10px] font-bold text-black">{product.brand}</span>
-                  </div>
+                  <VoucherBrandMark brand={product.brand} logo={product.logo} size={48} radius={999} />
                 </div>
 
                 <h3 className="text-[20px] font-bold text-white mb-4">Leaving Bioscope+</h3>

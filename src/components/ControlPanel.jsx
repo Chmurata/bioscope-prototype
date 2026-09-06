@@ -20,21 +20,16 @@ const buildGroups = (a) => [
     {
       group: 'Watching & paying',
       flows: [
+        // The three branches of the round transport button, in order.
         { title: 'Preview, then paywall',
-          desc: 'Seoul Vibe. Free preview runs, warns near the end, then asks you to subscribe or rent.',
-          go: () => a.openContent('seoul-vibe') },
+          desc: 'Shaan. The preview auto-plays, warns near the end, then the paywall rises. Round button reads Preview; the trailer sits in Trailers & Clips.',
+          go: () => a.openContent('shaan') },
         { title: 'Trailer, then paywall',
-          desc: 'The Bike Riders. No preview exists, so the trailer plays and the paywall follows it.',
-          go: () => a.openContent('bike-riders') },
+          desc: 'Khan. No preview, so the round button is Trailer and there is no rail. The paywall follows the trailer.',
+          go: () => a.openContent('khan') },
         { title: 'Nothing to play',
-          desc: 'Love Rosie. Locked with no preview and no trailer — paywall opens straight from the page.',
-          go: () => a.openContent('love-rosie') },
-        { title: 'Paywall, straight away',
-          desc: 'Seoul Vibe with the paywall already open. Subscribing unlocks everything; renting lives under See all packs.',
-          go: () => { const c = find('seoul-vibe'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
-        { title: 'Subscribe-only title',
-          desc: 'Nishiddho has no preview, so the page shows Subscribe on its own.',
-          go: () => { const c = find('bangla-original'); a.setSelectedDrama(c); a.setScreen(SCREENS.CONTENT_DETAIL); a.setPaywallContext({ origin: 'locked-tap', content: c }); } },
+          desc: 'Chokro 2. Neither preview nor trailer, so the round button sits disabled and the paywall opens from Subscribe.',
+          go: () => a.openContent('chokro-2') },
       ],
     },
     {
@@ -48,9 +43,12 @@ const buildGroups = (a) => [
     {
       group: 'Vouchers',
       flows: [
-        { title: 'Buy a Netflix voucher',
-          desc: 'Shop, product, disclosure, payment, then the code.',
-          go: () => a.setScreen(SCREENS.VOUCHER_STORE) },
+        { title: 'Buy a voucher',
+          desc: 'Store tab. Brand, product, disclosure, payment, then the code.',
+          go: () => { a.setVoucherTab('store'); a.setScreen(SCREENS.VOUCHER_STORE); } },
+        { title: 'My vouchers',
+          desc: 'Same page, My vouchers tab. Three at once — one unused, one redeemed and running, one that expired unused.',
+          go: () => { a.setOwnedVouchers(demoLocker); a.setVoucherTab('mine'); a.setScreen(SCREENS.VOUCHER_STORE); } },
       ],
     },
     {
@@ -89,7 +87,7 @@ export default function ControlPanel() {
     subscription, setSubscription, setRentals,
     setCarrierKnown, setOrientation,
     setPaywallContext, setShowMySubscriptions,
-    setActiveCampaign, setOwnedVouchers,
+    setActiveCampaign, setOwnedVouchers, setVoucherTab,
   } = app;
 
   // Every flow starts from a known-clean state so scenarios never bleed together.
@@ -101,6 +99,7 @@ export default function ControlPanel() {
     setSubscription(null);
     setCarrierKnown(true);
     setOrientation('portrait');
+    setVoucherTab('store');
   };
 
   const run = (flow) => {
@@ -114,7 +113,7 @@ export default function ControlPanel() {
     setScreen(SCREENS.CONTENT_DETAIL);
   };
 
-  const GROUPS = buildGroups({ openContent, setSelectedDrama, setScreen, setPaywallContext, setSubscription, setOrientation, setShowMySubscriptions, setOwnedVouchers, setActiveCampaign, setCarrierKnown });
+  const GROUPS = buildGroups({ openContent, setSelectedDrama, setScreen, setPaywallContext, setSubscription, setOrientation, setShowMySubscriptions, setOwnedVouchers, setVoucherTab, setActiveCampaign, setCarrierKnown });
 
   const reset = () => { base(); setOwnedVouchers(demoLocker); setSelectedDrama(null); setScreen(SCREENS.HOME); setLastRun(null); };
 

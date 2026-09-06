@@ -19,7 +19,7 @@ const navItems = [
   { outline: FilmOutline,  solid: FilmSolid,  label: 'Microdrama', screen: 'microdrama' },
   { outline: PlayOutline,  solid: PlaySolid,  label: 'Shorts',     screen: 'shorts' },
   { outline: FireOutline,  solid: FireSolid,  label: 'New',        screen: null },
-  { outline: UserOutline,  solid: UserSolid,  label: 'Account',    screen: 'voucher-store' },
+  { outline: UserOutline,  solid: UserSolid,  label: 'Account',    screen: 'profile' },
 ];
 
 export default function BottomNavbar() {

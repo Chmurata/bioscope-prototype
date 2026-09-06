@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ThumbsUp, Plus, Share2, ChevronDown, ChevronRight, Play, Pause, Crown } from 'lucide-react';
+import { ThumbsUp, Plus, Share2, ChevronDown, ChevronRight, Play, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
 import LongFormPlayer from '../components/LongFormPlayer';
@@ -23,9 +23,6 @@ export default function ContentDetailScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
   const [explicitMode, setExplicitMode] = useState(null);
-  // Once the preview has run to its cut point it is spent, so the CTA goes back
-  // to its default label rather than offering to resume a finished clip.
-  const [previewWatched, setPreviewWatched] = useState(false);
 
   // Determine play mode based on FIXTURES.md §3
   const playState = useMemo(() => {
@@ -61,12 +58,10 @@ export default function ContentDetailScreen() {
 
   useEffect(() => {
     setExplicitMode(null);
-    setPreviewWatched(false);
     hasShownTrailerPaywallRef.current = false;
   }, [selectedDrama?.id]);
 
   const handleBoundaryReached = () => {
-    if (playState.origin === 'preview-end') setPreviewWatched(true);
     if (playState.origin) {
       if (playState.origin === 'trailer-end') {
         if (!hasShownTrailerPaywallRef.current) {
@@ -96,11 +91,22 @@ export default function ContentDetailScreen() {
   const contentPacks = selectedDrama.packs ? packs.filter(p => selectedDrama.packs.includes(p.id)) : [];
   const recommendedPack = contentPacks.find(p => p.recommended) || contentPacks[0];
 
-  // The preview auto-plays in the pinned player, so the secondary CTA doubles as
-  // its transport: it says what the preview is doing and toggles it.
-  const inPreview = playState.mode === 'preview';
-  const previewLive = inPreview && playing;
-  const trailerLive = playState.mode === 'trailer' && playing;
+  // The round action button is the pinned player's transport. A title with a
+  // preview shows Preview and keeps its trailer in the rail below; a title with
+  // only a trailer shows Trailer here and gets no rail.
+  const transportMode = selectedDrama.hasPreview ? 'preview' : selectedDrama.hasTrailer ? 'trailer' : null;
+  const transportLive = transportMode !== null && playState.mode === transportMode && playing;
+  const showTrailerRail = selectedDrama.hasPreview && selectedDrama.hasTrailer;
+
+  const runTransport = () => {
+    if (!transportMode) return;
+    if (transportLive) {
+      setPlaying(false);
+      return;
+    }
+    setExplicitMode(transportMode === 'trailer' ? 'trailer' : null);
+    setPlaying(true);
+  };
 
   return (
     <div className="absolute inset-0 bg-dark flex flex-col overflow-hidden z-50 pt-[max(env(safe-area-inset-top),var(--spacing-topsafe))]">
@@ -127,7 +133,6 @@ export default function ContentDetailScreen() {
         ) : (
           <LongFormPlayer 
             src={playState.src}
-            poster={selectedDrama.backdrop}
             title={selectedDrama.title}
             playing={playing}
             onPlayPause={setPlaying}
@@ -175,7 +180,7 @@ export default function ContentDetailScreen() {
           </div>
 
           {/* CTA Area */}
-          <div className="mb-6 space-y-3">
+          <div className="mb-6">
             {/* Primary Action (Play or Subscribe) */}
             {!playState.entitled && selectedDrama.isPaywalled && recommendedPack ? (
               <button 
@@ -196,23 +201,6 @@ export default function ContentDetailScreen() {
                 </span>
               </button>
             )}
-
-            {/* Secondary Action (Free Preview) */}
-            {!playState.entitled && selectedDrama.hasPreview && (
-              <button 
-                onClick={() => (previewLive ? setPlaying(false) : handlePlayTap())}
-                className="w-full h-[48px] bg-white rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
-              >
-                {previewLive
-                  ? <Pause size={18} className="text-black" fill="currentColor" />
-                  : <Play size={18} className="text-black" fill="currentColor" />}
-                <span className="text-[16px] font-bold text-black">
-                  {previewLive
-                    ? 'Preview playing'
-                    : inPreview && !previewWatched ? 'Resume Free Preview' : 'Watch Free Preview'}
-                </span>
-              </button>
-            )}
           </div>
 
           {/* Action Row */}
@@ -223,19 +211,13 @@ export default function ContentDetailScreen() {
               onClick={() => toggleLike(selectedDrama.id)} 
             />
             <ActionBtn 
-              active={trailerLive}
-              icon={trailerLive
-                ? <TrailerPauseIcon size={20} className="text-black" />
-                : <TrailerPlayIcon size={20} className="text-white" />}
-              label="Trailer" 
-              onClick={() => {
-                if (trailerLive) {
-                  setPlaying(false);
-                  return;
-                }
-                setExplicitMode('trailer');
-                setPlaying(true);
-              }} 
+              active={transportLive}
+              disabled={!transportMode}
+              icon={transportLive
+                ? <CirclePauseIcon size={20} className="text-black" />
+                : <CirclePlayIcon size={20} className="text-white" />}
+              label={transportMode === 'trailer' ? 'Trailer' : 'Preview'}
+              onClick={runTransport}
             />
             <ActionBtn 
               icon={<Plus size={20} strokeWidth={1.5} className={isInList ? "text-cyan" : "text-white"} />} 
@@ -278,6 +260,25 @@ export default function ContentDetailScreen() {
               See more <ChevronDown size={16} className={`transition-transform ${seeMore ? 'rotate-180' : ''}`} />
             </button>
           </div>
+
+          {/* Trailers & Clips — only when the preview owns the round button */}
+          {showTrailerRail && (
+            <div className="mb-8">
+              <h3 className="text-[18px] font-bold text-white mb-4">Trailers & Clips</h3>
+              <div className="w-[160px]">
+                <div className="relative w-full aspect-video rounded-[8px] overflow-hidden bg-white/5 ring-1 ring-white/10">
+                  <img src={selectedDrama.backdrop} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/35" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <CirclePlayIcon size={30} className="text-white" />
+                  </div>
+                </div>
+                <span className="block text-[12px] font-medium text-white/90 mt-2 truncate">
+                  {selectedDrama.title} Trailer
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* More Like This */}
           <div>
@@ -324,10 +325,10 @@ export default function ContentDetailScreen() {
   );
 }
 
-// Trailer mark — a play glyph inside the ring at rest, a pause glyph inside the
-// same ring while the trailer runs. Strokes use currentColor so the icon flips
+// Transport mark — a play glyph inside the ring at rest, a pause glyph inside
+// the same ring while the clip runs. Strokes use currentColor so the icon flips
 // to black when the button inverts to white.
-function TrailerPlayIcon({ size = 24, className = '' }) {
+function CirclePlayIcon({ size = 24, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <path d="M11.97 22C17.4928 22 21.97 17.5228 21.97 12C21.97 6.47715 17.4928 2 11.97 2C6.44712 2 1.96997 6.47715 1.96997 12C1.96997 17.5228 6.44712 22 11.97 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -336,7 +337,7 @@ function TrailerPlayIcon({ size = 24, className = '' }) {
   );
 }
 
-function TrailerPauseIcon({ size = 24, className = '' }) {
+function CirclePauseIcon({ size = 24, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <path d="M11.97 2C6.44997 2 1.96997 6.48 1.96997 12C1.96997 17.52 6.44997 22 11.97 22C17.49 22 21.97 17.52 21.97 12C21.97 6.48 17.5 2 11.97 2ZM10.72 15.03C10.72 15.51 10.52 15.7 10.01 15.7H8.70997C8.19997 15.7 7.99997 15.51 7.99997 15.03V8.97C7.99997 8.49 8.19997 8.3 8.70997 8.3H9.99997C10.51 8.3 10.71 8.49 10.71 8.97V15.03H10.72ZM16 15.03C16 15.51 15.8 15.7 15.29 15.7H14C13.49 15.7 13.29 15.51 13.29 15.03V8.97C13.29 8.49 13.49 8.3 14 8.3H15.29C15.8 8.3 16 8.49 16 8.97V15.03Z" fill="currentColor" />
@@ -344,13 +345,19 @@ function TrailerPauseIcon({ size = 24, className = '' }) {
   );
 }
 
-function ActionBtn({ icon, label, onClick, active = false }) {
+function ActionBtn({ icon, label, onClick, active = false, disabled = false }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-center gap-2 cursor-pointer group">
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex flex-col items-center gap-2 group ${disabled ? 'cursor-default opacity-40' : 'cursor-pointer'}`}
+    >
       <div className={`w-[48px] h-[48px] rounded-full flex items-center justify-center transition-colors ${
         active
           ? 'bg-white ring-1 ring-white group-active:bg-white/85'
-          : 'bg-white/5 ring-1 ring-white/20 group-active:bg-white/10'
+          : disabled
+            ? 'bg-white/5 ring-1 ring-white/10'
+            : 'bg-white/5 ring-1 ring-white/20 group-active:bg-white/10'
       }`}>
         {icon}
       </div>

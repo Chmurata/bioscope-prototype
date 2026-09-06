@@ -1,5 +1,15 @@
 import { VOUCHER_LOGOS } from '../assets/voucher-logos';
 
+// Brand hues drive the storefront's gradients and row tints — there is no
+// licensed artwork, so colour is what tells one brand from another.
+export const BRAND_ACCENTS = {
+  'Netflix': '#E50914',
+  'Prime Video': '#00A8E1',
+  'YouTube Premium': '#FF0033',
+  'Spotify': '#1DB954',
+  'OneGames': '#7C4DFF',
+};
+
 export const vouchers = [
   { id: 'netflix-mobile-1m', brand: 'Netflix', logo: VOUCHER_LOGOS.netflix, product: 'Mobile plan · 1 month', price: 250, codeValidDays: 90, grants: '1 month', category: 'Streaming' },
   { id: 'netflix-basic-3m', brand: 'Netflix', logo: VOUCHER_LOGOS.netflix, product: 'Basic · 3 months', price: 1400, codeValidDays: 90, grants: '3 months', category: 'Streaming' },

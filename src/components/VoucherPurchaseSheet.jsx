@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, AlertCircle, Copy, ExternalLink, X } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { vouchers } from '../data/vouchers';
+import VoucherBrandMark from './VoucherBrandMark';
 import PaymentMethodList from './PaymentMethodList';
 
 export default function VoucherPurchaseSheet({ voucherId, onClose }) {
@@ -78,9 +79,7 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
                 <div className="w-[32px]" />
               </div>
               <div className="flex-1 overflow-y-auto px-4 pt-6 pb-6 text-center">
-                <div className="w-[80px] h-[80px] bg-white rounded-[16px] mx-auto mb-4 flex items-center justify-center shadow-lg">
-                  <span className="text-[16px] font-bold text-black">{voucher.brand}</span>
-                </div>
+                <VoucherBrandMark brand={voucher.brand} logo={voucher.logo} size={80} radius={16} className="mx-auto mb-4 shadow-lg" />
                 <h2 className="text-[24px] font-bold text-white mb-1">{voucher.product}</h2>
                 <p className="text-[14px] text-white/60 mb-8">Grants access to {voucher.brand} for {voucher.grants}</p>
                 
@@ -175,8 +174,9 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
                 <span className="text-[16px] font-bold text-white">Select Payment</span>
               </div>
               <div className="bg-surface-dark p-4 border-b border-white/10">
-                <div className="flex justify-between items-center">
-                  <div>
+                <div className="flex justify-between items-center gap-3">
+                  <VoucherBrandMark brand={voucher.brand} logo={voucher.logo} size={40} radius={10} />
+                  <div className="flex-1 min-w-0">
                     <span className="text-[14px] font-bold text-white block">{voucher.brand}</span>
                     <span className="text-[12px] text-white/60">{voucher.product}</span>
                   </div>

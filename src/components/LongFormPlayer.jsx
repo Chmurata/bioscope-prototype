@@ -12,7 +12,6 @@ function formatTime(seconds) {
 
 export default function LongFormPlayer({ 
   src, 
-  poster, 
   title, 
   playing, 
   onPlayPause, 
@@ -43,7 +42,12 @@ export default function LongFormPlayer({
 
   useEffect(() => {
     if (playing) {
-      videoRef.current?.play().catch(e => console.error("Playback failed", e));
+      const v = videoRef.current;
+      v?.play().catch(() => {
+        if (!v) return;
+        v.muted = true;
+        v.play().catch(() => {});
+      });
       resetHideTimer();
     } else {
       videoRef.current?.pause();
@@ -140,7 +144,6 @@ export default function LongFormPlayer({
       <video
         ref={videoRef}
         src={src}
-        poster={poster}
         className="w-full h-full object-contain"
         playsInline
         onTimeUpdate={handleTimeUpdate}

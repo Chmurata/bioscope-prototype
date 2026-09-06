@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock, Check, Flame, Timer } from 'lucide-react';
+import { Clock, Flame, Timer } from 'lucide-react';
 import OTTLogoStrip from './OTTLogoStrip';
 import { PAYMENT_LOGOS } from '../assets/payment-logos';
 import { useApp } from '../contexts/AppContext';
@@ -57,7 +57,11 @@ export default function PackCard({ pack, onSelect }) {
   const struckPrice = campaign ? pack.price : pack.originalPrice;
 
   return (
-    <div className={`w-full text-left rounded-[16px] p-5 relative transition-all flex flex-col h-full ${baseBg} ${ring}`}>
+    <button
+      type="button"
+      onClick={() => onSelect?.(pack.id)}
+      className={`w-full text-left rounded-[16px] p-5 relative transition-all flex flex-col cursor-pointer active:scale-[0.99] ${baseBg} ${ring}`}
+    >
       {/* Badges Container */}
       {(pack.badge || campaign) && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -103,12 +107,12 @@ export default function PackCard({ pack, onSelect }) {
       <p className="text-[12px] text-white/80 leading-[18px] mb-3">{pack.coverage}</p>
 
       {pack.providers?.length > 0 && (
-        <div className="mb-4">
+        <div className="mb-3">
           <OTTLogoStrip brands={pack.providers} size={24} cols={10} />
         </div>
       )}
 
-      <div className="mt-auto pt-2 border-t border-white/10 flex flex-col gap-3">
+      <div className="pt-1 flex flex-col gap-3">
         <div className="flex items-end gap-1.5">
           {struckPrice && (
             <span className="text-[14px] font-medium text-white/50 line-through tabular-nums leading-none mb-0.5">
@@ -140,20 +144,7 @@ export default function PackCard({ pack, onSelect }) {
             })}
           </div>
         )}
-
-        {pack.eligible ? (
-          <button 
-            onClick={() => onSelect?.(pack.id)}
-            className={`w-full h-[44px] rounded-[8px] flex items-center justify-center gap-2 cursor-pointer mt-2 ${isRecommended ? 'bg-amber text-black' : 'bg-white text-black'}`}
-          >
-            <span className="text-[15px] font-bold">{isRecommended ? 'Select Best Value' : 'Select Pack'}</span>
-          </button>
-        ) : (
-          <div className="w-full h-[44px] rounded-[8px] bg-white/5 ring-1 ring-white/10 flex items-center justify-center mt-2">
-            <span className="text-[14px] font-medium text-white/50">Requirement not met</span>
-          </div>
-        )}
       </div>
-    </div>
+    </button>
   );
 }

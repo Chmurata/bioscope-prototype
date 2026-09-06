@@ -5,6 +5,7 @@ import { useApp } from '../contexts/AppContext';
 import { packs } from '../data/packs';
 import { vouchers } from '../data/vouchers';
 import OwnedVoucherDetailSheet from './OwnedVoucherDetailSheet';
+import VoucherBrandMark from './VoucherBrandMark';
 import OTTLogoStrip from './OTTLogoStrip';
 
 export default function MySubscriptionsSheet({ open, onClose }) {
@@ -98,9 +99,7 @@ export default function MySubscriptionsSheet({ open, onClose }) {
                         className="w-full bg-surface-dark ring-1 ring-white/10 rounded-[12px] p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors text-left"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-[40px] h-[40px] bg-white rounded-[8px] flex items-center justify-center shrink-0">
-                            <span className="text-[10px] font-bold text-black">{product.brand}</span>
-                          </div>
+                          <VoucherBrandMark brand={product.brand} logo={product.logo} size={40} radius={8} />
                           <div>
                             <span className="text-[14px] font-bold text-white block">{product.product}</span>
                             {v.state === 'unredeemed' && (

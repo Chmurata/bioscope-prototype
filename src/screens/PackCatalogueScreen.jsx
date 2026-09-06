@@ -86,20 +86,17 @@ export default function PackCatalogueScreen() {
         <button onClick={goBack} className="cursor-pointer">
           <ArrowLeft size={28} className="text-white" />
         </button>
-        <div>
-          <h1 className="text-[28px] font-bold text-white leading-tight tracking-tight">Select Your Pack</h1>
-          <span className="text-[14px] text-white/60">Unlock premium entertainment</span>
-        </div>
+        <h1 className="text-[20px] font-bold text-white leading-tight tracking-tight">Select Your Pack</h1>
       </div>
 
       {/* Filters (Sticky) */}
-      <div className="shrink-0 bg-dark border-b border-white/10 pb-4">
-        <div className="overflow-x-auto no-scrollbar px-5 mb-4 flex gap-2">
+      <div className="shrink-0 bg-dark border-b border-white/10 pb-2">
+        <div className="overflow-x-auto no-scrollbar px-5 mb-2 flex gap-1">
           {VALIDITY_OPTIONS.map(v => (
             <button
               key={v}
               onClick={() => setSelectedValidity(v)}
-              className={`shrink-0 h-[40px] px-5 rounded-full text-[14px] font-bold transition-colors cursor-pointer ${
+              className={`shrink-0 h-[28px] px-2.5 rounded-full text-[11px] font-bold transition-colors cursor-pointer ${
                 selectedValidity === v ? 'bg-white text-black' : 'bg-surface-dark text-white hover:bg-white/10 ring-1 ring-white/10'
               }`}
             >
@@ -107,12 +104,12 @@ export default function PackCatalogueScreen() {
             </button>
           ))}
         </div>
-        <div className="overflow-x-auto no-scrollbar px-5 flex gap-2">
+        <div className="overflow-x-auto no-scrollbar px-5 flex gap-1">
           {PLATFORM_OPTIONS.map(p => (
             <button
               key={p}
               onClick={() => setSelectedPlatform(p)}
-              className={`shrink-0 h-[40px] px-5 rounded-full text-[14px] font-bold transition-colors cursor-pointer ${
+              className={`shrink-0 h-[28px] px-2.5 rounded-full text-[11px] font-bold transition-colors cursor-pointer ${
                 selectedPlatform === p ? 'bg-white text-black' : 'bg-surface-dark text-white hover:bg-white/10 ring-1 ring-white/10'
               }`}
             >
@@ -123,7 +120,7 @@ export default function PackCatalogueScreen() {
       </div>
 
       {/* List */}
-      <div ref={listRef} className="flex-1 overflow-y-auto px-5 pt-6 pb-12 flex flex-col gap-6">
+      <div ref={listRef} className="flex-1 overflow-y-auto px-5 pt-6 pb-12 space-y-6">
         
         {/* Hoisted Recommended Pack */}
         {recommendedPack && (
@@ -137,7 +134,7 @@ export default function PackCatalogueScreen() {
 
         {/* Filtered Packs */}
         {filteredPacks.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4">
             {filteredPacks.map(p => (
               <div key={p.id} ref={el => { cardRefs.current[p.id] = el; }}>
                 <PackCard pack={p} onSelect={() => handlePackSelect(p.id)} />

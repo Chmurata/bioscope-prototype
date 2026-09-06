@@ -11,6 +11,8 @@ import PlayerScreen from './screens/PlayerScreen';
 import ContentDetailScreen from './screens/ContentDetailScreen';
 import PackCatalogueScreen from './screens/PackCatalogueScreen';
 import VoucherStorefrontScreen from './screens/VoucherStorefrontScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import PaymentSubscriptionScreen from './screens/PaymentSubscriptionScreen';
 import DramaSheet from './components/DramaSheet';
 import PaywallSheet from './components/PaywallSheet';
 import MySubscriptionsSheet from './components/MySubscriptionsSheet';
@@ -92,6 +94,18 @@ function ScreenRouter() {
                 <ShortsScreen />
               </motion.div>
             )}
+            {screen === SCREENS.PROFILE && (
+              <motion.div
+                key="profile"
+                className="absolute inset-0 bg-dark"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
+              >
+                <ProfileScreen />
+              </motion.div>
+            )}
             {screen === SCREENS.VOUCHER_STORE && (
               <motion.div key="voucher-store" className="absolute inset-0 z-40 bg-dark" {...slideConfig}>
                 <VoucherStorefrontScreen />
@@ -134,6 +148,19 @@ function ScreenRouter() {
           </motion.div>
         )}
         
+        {screen === SCREENS.PAYMENT && (
+          <motion.div
+            key="payment"
+            className="absolute inset-0 z-[45]"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+          >
+            <PaymentSubscriptionScreen />
+          </motion.div>
+        )}
+
         {screen === SCREENS.PACK_CATALOGUE && (
           <motion.div
             key="pack-catalogue"
