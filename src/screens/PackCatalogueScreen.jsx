@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { ArrowLeft, Crown } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { packs } from '../data/packs';
@@ -18,7 +18,7 @@ const validityMap = {
 };
 
 export default function PackCatalogueScreen() {
-  const { goBack, setPaywallContext } = useApp();
+  const { goBack, setPaywallContext, activeCampaign } = useApp();
   
   const [selectedValidity, setSelectedValidity] = useState('All');
   const [selectedPlatform, setSelectedPlatform] = useState('All');
@@ -27,6 +27,10 @@ export default function PackCatalogueScreen() {
   // Filter logic
   const filteredPacks = useMemo(() => {
     return packs.filter(p => {
+      // A pack the user cannot meet the requirement for is not offered at all,
+      // the way it works in the real app — it is not shown greyed out.
+      if (!p.eligible) return false;
+
       // Exclude recommended pack from normal list, it will be hoisted
       if (p.recommended) return false;
 
@@ -49,6 +53,27 @@ export default function PackCatalogueScreen() {
   }, [selectedValidity, selectedPlatform]);
 
   const recommendedPack = packs.find(p => p.recommended);
+
+  // A campaign is set from outside this screen, so the pack it applies to can be
+  // anywhere in the list. Bring it into view rather than making the user hunt.
+  const listRef = useRef(null);
+  const cardRefs = useRef({});
+  const campaignPackId = activeCampaign?.packId;
+
+  useEffect(() => {
+    if (!campaignPackId) return;
+    const frame = requestAnimationFrame(() => {
+      const el = cardRefs.current[campaignPackId];
+      const list = listRef.current;
+      if (!el || !list) return;
+      const elRect = el.getBoundingClientRect();
+      const listRect = list.getBoundingClientRect();
+      const target = list.scrollTop + (elRect.top - listRect.top)
+        - Math.max(0, (list.clientHeight - elRect.height) / 2);
+      list.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [campaignPackId, filteredPacks]);
 
   const handlePackSelect = (packId) => {
     setPaywallContext({ origin: 'generic', content: null, initialPackId: packId });
@@ -98,11 +123,11 @@ export default function PackCatalogueScreen() {
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-5 pt-6 pb-12 flex flex-col gap-6">
+      <div ref={listRef} className="flex-1 overflow-y-auto px-5 pt-6 pb-12 flex flex-col gap-6">
         
         {/* Hoisted Recommended Pack */}
         {recommendedPack && (
-          <div>
+          <div ref={el => { cardRefs.current[recommendedPack.id] = el; }}>
             <h2 className="text-[14px] font-bold text-amber uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Crown size={16} /> Most Popular
             </h2>
@@ -114,7 +139,9 @@ export default function PackCatalogueScreen() {
         {filteredPacks.length > 0 ? (
           <div className="flex flex-col gap-4">
             {filteredPacks.map(p => (
-              <PackCard key={p.id} pack={p} onSelect={() => handlePackSelect(p.id)} />
+              <div key={p.id} ref={el => { cardRefs.current[p.id] = el; }}>
+                <PackCard pack={p} onSelect={() => handlePackSelect(p.id)} />
+              </div>
             ))}
           </div>
         ) : (

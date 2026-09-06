@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ThumbsUp, Film, Plus, Share2, Download, ChevronDown, ChevronRight, Play, Crown } from 'lucide-react';
+import { ThumbsUp, Plus, Share2, ChevronDown, ChevronRight, Play, Pause, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
 import LongFormPlayer from '../components/LongFormPlayer';
@@ -23,6 +23,9 @@ export default function ContentDetailScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [seeMore, setSeeMore] = useState(false);
   const [explicitMode, setExplicitMode] = useState(null);
+  // Once the preview has run to its cut point it is spent, so the CTA goes back
+  // to its default label rather than offering to resume a finished clip.
+  const [previewWatched, setPreviewWatched] = useState(false);
 
   // Determine play mode based on FIXTURES.md §3
   const playState = useMemo(() => {
@@ -58,10 +61,12 @@ export default function ContentDetailScreen() {
 
   useEffect(() => {
     setExplicitMode(null);
+    setPreviewWatched(false);
     hasShownTrailerPaywallRef.current = false;
   }, [selectedDrama?.id]);
 
   const handleBoundaryReached = () => {
+    if (playState.origin === 'preview-end') setPreviewWatched(true);
     if (playState.origin) {
       if (playState.origin === 'trailer-end') {
         if (!hasShownTrailerPaywallRef.current) {
@@ -91,8 +96,14 @@ export default function ContentDetailScreen() {
   const contentPacks = selectedDrama.packs ? packs.filter(p => selectedDrama.packs.includes(p.id)) : [];
   const recommendedPack = contentPacks.find(p => p.recommended) || contentPacks[0];
 
+  // The preview auto-plays in the pinned player, so the secondary CTA doubles as
+  // its transport: it says what the preview is doing and toggles it.
+  const inPreview = playState.mode === 'preview';
+  const previewLive = inPreview && playing;
+  const trailerLive = playState.mode === 'trailer' && playing;
+
   return (
-    <div className="absolute inset-0 bg-dark flex flex-col overflow-hidden z-50">
+    <div className="absolute inset-0 bg-dark flex flex-col overflow-hidden z-50 pt-[max(env(safe-area-inset-top),var(--spacing-topsafe))]">
       
       {/* Player Section (Pinned to top) */}
       <div className="w-full shrink-0 relative bg-black aspect-video flex items-center justify-center">
@@ -108,9 +119,9 @@ export default function ContentDetailScreen() {
             
             <button 
               onClick={handlePlayTap}
-              className="relative z-10 w-[64px] h-[64px] rounded-full bg-cyan flex items-center justify-center cursor-pointer shadow-[0_0_20px_rgba(0,187,255,0.4)]"
+              className="relative z-10 w-[64px] h-[64px] rounded-full bg-white flex items-center justify-center cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
             >
-              <Play size={32} className="text-dark ml-1" fill="currentColor" />
+              <Play size={32} className="text-black ml-1" fill="currentColor" />
             </button>
           </>
         ) : (
@@ -167,21 +178,13 @@ export default function ContentDetailScreen() {
           <div className="mb-6 space-y-3">
             {/* Primary Action (Play or Subscribe) */}
             {!playState.entitled && selectedDrama.isPaywalled && recommendedPack ? (
-              <>
-                <button 
-                  onClick={() => setPaywallContext({ origin: 'locked-tap', content: selectedDrama, initialPackId: recommendedPack.id })}
-                  className="w-full h-[48px] bg-[image:var(--gradient-subscribe)] rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
-                >
-                  <Crown size={20} className="text-black" />
-                  <span className="text-[16px] font-bold text-black">Subscribe</span>
-                </button>
-                {/* Simulated Rent Button based on mock */}
-                <button
-                  className="w-full h-[48px] bg-white rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
-                >
-                  <span className="text-[16px] font-bold text-black">Rent for TK 99</span>
-                </button>
-              </>
+              <button 
+                onClick={() => setPaywallContext({ origin: 'locked-tap', content: selectedDrama, initialPackId: recommendedPack.id })}
+                className="w-full h-[48px] bg-[image:var(--gradient-subscribe)] rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
+              >
+                <Crown size={20} className="text-black" />
+                <span className="text-[16px] font-bold text-black">Subscribe</span>
+              </button>
             ) : (
               <button 
                 onClick={handlePlayTap}
@@ -194,14 +197,19 @@ export default function ContentDetailScreen() {
               </button>
             )}
 
-            {/* Secondary Action (Free Preview or Rent) */}
+            {/* Secondary Action (Free Preview) */}
             {!playState.entitled && selectedDrama.hasPreview && (
               <button 
-                onClick={handlePlayTap}
+                onClick={() => (previewLive ? setPlaying(false) : handlePlayTap())}
                 className="w-full h-[48px] bg-white rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
               >
+                {previewLive
+                  ? <Pause size={18} className="text-black" fill="currentColor" />
+                  : <Play size={18} className="text-black" fill="currentColor" />}
                 <span className="text-[16px] font-bold text-black">
-                  Watch Free Preview
+                  {previewLive
+                    ? 'Preview playing'
+                    : inPreview && !previewWatched ? 'Resume Free Preview' : 'Watch Free Preview'}
                 </span>
               </button>
             )}
@@ -215,9 +223,16 @@ export default function ContentDetailScreen() {
               onClick={() => toggleLike(selectedDrama.id)} 
             />
             <ActionBtn 
-              icon={<Film size={20} strokeWidth={1.5} className="text-white" />} 
+              active={trailerLive}
+              icon={trailerLive
+                ? <TrailerPauseIcon size={20} className="text-black" />
+                : <TrailerPlayIcon size={20} className="text-white" />}
               label="Trailer" 
               onClick={() => {
+                if (trailerLive) {
+                  setPlaying(false);
+                  return;
+                }
                 setExplicitMode('trailer');
                 setPlaying(true);
               }} 
@@ -228,7 +243,6 @@ export default function ContentDetailScreen() {
               onClick={() => toggleMyList(selectedDrama.id)} 
             />
             <ActionBtn icon={<Share2 size={20} strokeWidth={1.5} className="text-white" />} label="Share" onClick={() => {}} />
-            <ActionBtn icon={<Download size={20} strokeWidth={1.5} className="text-white" />} label="Download" onClick={() => {}} />
           </div>
 
           {/* Synopsis Expander */}
@@ -310,10 +324,34 @@ export default function ContentDetailScreen() {
   );
 }
 
-function ActionBtn({ icon, label, onClick }) {
+// Trailer mark — a play glyph inside the ring at rest, a pause glyph inside the
+// same ring while the trailer runs. Strokes use currentColor so the icon flips
+// to black when the button inverts to white.
+function TrailerPlayIcon({ size = 24, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M11.97 22C17.4928 22 21.97 17.5228 21.97 12C21.97 6.47715 17.4928 2 11.97 2C6.44712 2 1.96997 6.47715 1.96997 12C1.96997 17.5228 6.44712 22 11.97 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.73999 12.2296V10.5596C8.73999 8.47964 10.21 7.62964 12.01 8.66964L13.46 9.50964L14.91 10.3496C16.71 11.3896 16.71 13.0896 14.91 14.1296L13.46 14.9696L12.01 15.8096C10.21 16.8496 8.73999 15.9996 8.73999 13.9196V12.2296Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TrailerPauseIcon({ size = 24, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M11.97 2C6.44997 2 1.96997 6.48 1.96997 12C1.96997 17.52 6.44997 22 11.97 22C17.49 22 21.97 17.52 21.97 12C21.97 6.48 17.5 2 11.97 2ZM10.72 15.03C10.72 15.51 10.52 15.7 10.01 15.7H8.70997C8.19997 15.7 7.99997 15.51 7.99997 15.03V8.97C7.99997 8.49 8.19997 8.3 8.70997 8.3H9.99997C10.51 8.3 10.71 8.49 10.71 8.97V15.03H10.72ZM16 15.03C16 15.51 15.8 15.7 15.29 15.7H14C13.49 15.7 13.29 15.51 13.29 15.03V8.97C13.29 8.49 13.49 8.3 14 8.3H15.29C15.8 8.3 16 8.49 16 8.97V15.03Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ActionBtn({ icon, label, onClick, active = false }) {
   return (
     <button onClick={onClick} className="flex flex-col items-center gap-2 cursor-pointer group">
-      <div className="w-[48px] h-[48px] rounded-full bg-white/5 ring-1 ring-white/20 flex items-center justify-center transition-colors group-active:bg-white/10">
+      <div className={`w-[48px] h-[48px] rounded-full flex items-center justify-center transition-colors ${
+        active
+          ? 'bg-white ring-1 ring-white group-active:bg-white/85'
+          : 'bg-white/5 ring-1 ring-white/20 group-active:bg-white/10'
+      }`}>
         {icon}
       </div>
       <span className="text-[12px] text-white/90 font-medium">{label}</span>

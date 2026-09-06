@@ -62,6 +62,10 @@
   --gradient-subscribe: linear-gradient(90deg, var(--premium-linear-1, #FFDC86) 40%, var(--premium-linear-2, #FFD160) 100%);
 
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* The fake status bar is a 30px overlay pinned at z-200 over every screen, so
+     anything anchored to the top of a screen has to clear it plus a gap. */
+  --spacing-topsafe: 42px; /* 30px status bar + 12px breathing room */
 }
 
 @layer base {

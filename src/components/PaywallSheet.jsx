@@ -78,12 +78,17 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
   if (!origin) return null;
 
   // Filter packs for this content
+  const eligiblePacks = packs.filter(p => p.eligible);
   const contentPacks = content 
-    ? packs.filter(p => content.packs.includes(p.id))
-    : packs;
+    ? eligiblePacks.filter(p => content.packs.includes(p.id))
+    : eligiblePacks;
 
-  // Sort: recommended first
-  const displayPacks = [...contentPacks].sort((a, b) => (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0));
+  // Sort: recommended first. The sheet is a shortcut, not the catalogue —
+  // it shows the two strongest options and sends the rest to the pack page.
+  const MAX_SHEET_PACKS = 2;
+  const displayPacks = [...contentPacks]
+    .sort((a, b) => (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0))
+    .slice(0, MAX_SHEET_PACKS);
 
   const handleSubscribeClick = () => {
     if (origin === 'generic') {
@@ -94,6 +99,7 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
     }
   };
 
+  // Rent is offered inside the pack sheet, not on the paywall prompt.
   const handleRentClick = () => {
     setIsRentFlow(true);
     setStage('rent-checkout');
@@ -249,15 +255,6 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
                   <Crown size={20} className="text-black" strokeWidth={2.5} />
                   <span className="text-[16px] font-bold text-black">Subscribe to Unlock</span>
                 </button>
-
-                {content?.rentPrice && (
-                  <button 
-                    onClick={handleRentClick}
-                    className="w-full h-[52px] bg-white text-black rounded-[12px] flex items-center justify-center cursor-pointer"
-                  >
-                    <span className="text-[16px] font-bold">Rent for ৳{content.rentPrice}</span>
-                  </button>
-                )}
               </div>
               
               <div className="mt-4 flex justify-center">
@@ -279,6 +276,19 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
                 <div className="w-[32px]" />
               </div>
               <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-3">
+                {content?.rentPrice && (
+                  <button
+                    onClick={handleRentClick}
+                    className="w-full flex items-center gap-3 rounded-[12px] bg-surface-dark ring-1 ring-white/10 px-4 py-3 text-left cursor-pointer active:scale-[0.99] transition-transform"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <span className="block text-[15px] font-bold text-white leading-[20px]">Rent this title</span>
+                      <span className="block text-[12px] text-white/60 leading-[16px] mt-0.5">48 hours from first play</span>
+                    </div>
+                    <span className="text-[18px] font-bold text-white tabular-nums leading-none shrink-0">৳{content.rentPrice}</span>
+                    <ArrowRight size={18} className="text-white/50 shrink-0" />
+                  </button>
+                )}
                 {displayPacks.map(p => (
                   <PackCard key={p.id} pack={p} onSelect={handlePackSelect} />
                 ))}
