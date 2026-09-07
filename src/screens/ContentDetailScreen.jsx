@@ -1,21 +1,20 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { ThumbsUp, Plus, Share2, ChevronDown, ChevronRight, Play, Crown } from 'lucide-react';
+import { ThumbsUp, Plus, Share2, ChevronDown, ChevronRight, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
 import LongFormPlayer from '../components/LongFormPlayer';
 import PaywallSheet from '../components/PaywallSheet';
 import PlayerSettingsSheet from '../components/PlayerSettingsSheet';
-import { packs } from '../data/packs';
 
 export default function ContentDetailScreen() {
-  const { 
-    selectedDrama, 
-    goBack, 
-    subscription, 
+  const {
+    selectedDrama,
+    goBack,
+    subscription,
     rentals,
     liked, toggleLike,
     myList, toggleMyList,
-    setPaywallContext, SCREENS
+    setScreen, SCREENS
   } = useApp();
 
   const [playing, setPlaying] = useState(true); // Auto-play if there's video
@@ -74,37 +73,33 @@ export default function ContentDetailScreen() {
     }
   };
 
-  const handlePlayTap = () => {
-    if (playState.mode === 'none') {
-      setPaywallOrigin('locked-tap');
-    } else {
-      setPlaying(true);
-    }
-  };
-
   if (!selectedDrama) return null;
 
   const isLiked = liked[selectedDrama.id];
   const isInList = myList[selectedDrama.id];
 
-  // Find recommended pack for this content
-  const contentPacks = selectedDrama.packs ? packs.filter(p => selectedDrama.packs.includes(p.id)) : [];
-  const recommendedPack = contentPacks.find(p => p.recommended) || contentPacks[0];
-
-  // The round action button is the pinned player's transport. A title with a
-  // preview shows Preview and keeps its trailer in the rail below; a title with
-  // only a trailer shows Trailer here and gets no rail.
-  const transportMode = selectedDrama.hasPreview ? 'preview' : selectedDrama.hasTrailer ? 'trailer' : null;
-  const transportLive = transportMode !== null && playState.mode === transportMode && playing;
+  // A title with both clips still only has one rail card below (trailer); the
+  // preview/trailer pair above live as their own small buttons (R3/R7.3).
   const showTrailerRail = selectedDrama.hasPreview && selectedDrama.hasTrailer;
 
-  const runTransport = () => {
-    if (!transportMode) return;
-    if (transportLive) {
+  const previewLive = selectedDrama.hasPreview && playState.mode === 'preview' && playing;
+  const trailerLive = selectedDrama.hasTrailer && playState.mode === 'trailer' && playing;
+
+  const handlePreviewTap = () => {
+    if (previewLive) {
       setPlaying(false);
       return;
     }
-    setExplicitMode(transportMode === 'trailer' ? 'trailer' : null);
+    setExplicitMode(null);
+    setPlaying(true);
+  };
+
+  const handleTrailerTap = () => {
+    if (trailerLive) {
+      setPlaying(false);
+      return;
+    }
+    setExplicitMode('trailer');
     setPlaying(true);
   };
 
@@ -121,13 +116,6 @@ export default function ContentDetailScreen() {
             {/* Nav back button for no-video state */}
             <button onClick={goBack} className="absolute top-[calc(env(safe-area-inset-top,1rem)+1rem)] left-4 z-20 cursor-pointer w-10 h-10 flex items-center justify-center bg-black/30 rounded-full backdrop-blur-sm">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            
-            <button 
-              onClick={handlePlayTap}
-              className="relative z-10 w-[64px] h-[64px] rounded-full bg-white flex items-center justify-center cursor-pointer shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
-            >
-              <Play size={32} className="text-black ml-1" fill="currentColor" />
             </button>
           </>
         ) : (
@@ -179,50 +167,52 @@ export default function ContentDetailScreen() {
             </div>
           </div>
 
-          {/* CTA Area */}
-          <div className="mb-6">
-            {/* Primary Action (Play or Subscribe) */}
-            {!playState.entitled && selectedDrama.isPaywalled && recommendedPack ? (
-              <button 
-                onClick={() => setPaywallContext({ origin: 'locked-tap', content: selectedDrama, initialPackId: recommendedPack.id })}
+          {/* CTA Area — a single Subscribe CTA for any non-entitled user, routing to
+              the pack catalogue filtered by this content; no primary CTA once entitled (R2). */}
+          {!playState.entitled && (
+            <div className="mb-6">
+              <button
+                onClick={() => setScreen(SCREENS.PACK_CATALOGUE, { content: selectedDrama })}
                 className="w-full h-[48px] bg-[image:var(--gradient-subscribe)] rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
               >
                 <Crown size={20} className="text-black" />
                 <span className="text-[16px] font-bold text-black">Subscribe</span>
               </button>
-            ) : (
-              <button 
-                onClick={handlePlayTap}
-                className="w-full h-[48px] bg-white rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform"
-              >
-                <Play size={20} className="text-black" fill="currentColor" />
-                <span className="text-[16px] font-bold text-black">
-                  Play Now
-                </span>
-              </button>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Action Row */}
+          {/* Action Row — Preview/Trailer sit either side of centre, omitted (not
+              disabled) when the clip doesn't exist for this title (R7.3). */}
           <div className="flex items-center justify-between px-2 mb-8">
-            <ActionBtn 
-              icon={<ThumbsUp size={20} strokeWidth={1.5} className={isLiked ? "text-cyan" : "text-white"} fill={isLiked ? "var(--color-cyan)" : "none"} />} 
-              label={selectedDrama.likes} 
-              onClick={() => toggleLike(selectedDrama.id)} 
+            <ActionBtn
+              icon={<ThumbsUp size={20} strokeWidth={1.5} className={isLiked ? "text-cyan" : "text-white"} fill={isLiked ? "var(--color-cyan)" : "none"} />}
+              label={selectedDrama.likes}
+              onClick={() => toggleLike(selectedDrama.id)}
             />
-            <ActionBtn 
-              active={transportLive}
-              disabled={!transportMode}
-              icon={transportLive
-                ? <CirclePauseIcon size={20} className="text-black" />
-                : <CirclePlayIcon size={20} className="text-white" />}
-              label={transportMode === 'trailer' ? 'Trailer' : 'Preview'}
-              onClick={runTransport}
-            />
-            <ActionBtn 
-              icon={<Plus size={20} strokeWidth={1.5} className={isInList ? "text-cyan" : "text-white"} />} 
-              label="My List" 
-              onClick={() => toggleMyList(selectedDrama.id)} 
+            {selectedDrama.hasPreview && (
+              <ActionBtn
+                active={previewLive}
+                icon={previewLive
+                  ? <PreviewPauseIcon size={20} className="text-black" />
+                  : <PreviewPlayIcon size={20} className="text-white" />}
+                label="Preview"
+                onClick={handlePreviewTap}
+              />
+            )}
+            {selectedDrama.hasTrailer && (
+              <ActionBtn
+                active={trailerLive}
+                icon={trailerLive
+                  ? <CirclePauseIcon size={20} className="text-black" />
+                  : <CirclePlayIcon size={20} className="text-white" />}
+                label="Trailer"
+                onClick={handleTrailerTap}
+              />
+            )}
+            <ActionBtn
+              icon={<Plus size={20} strokeWidth={1.5} className={isInList ? "text-cyan" : "text-white"} />}
+              label="My List"
+              onClick={() => toggleMyList(selectedDrama.id)}
             />
             <ActionBtn icon={<Share2 size={20} strokeWidth={1.5} className="text-white" />} label="Share" onClick={() => {}} />
           </div>
@@ -322,6 +312,31 @@ export default function ContentDetailScreen() {
       />
 
     </div>
+  );
+}
+
+// Preview mark — Anik's authored pair (`Preview Play.svg` / `Preview Pause.svg`):
+// a rounded viewer frame with a sparkle, holding a play glyph at rest and two
+// bars while the clip runs. Strokes are currentColor so the glyph flips to
+// black when the button inverts to white.
+function PreviewPlayIcon({ size = 24, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M14.4531 12.8948C14.3016 13.5215 13.5857 13.9644 12.1539 14.8502C10.7697 15.7064 10.0777 16.1346 9.51993 15.9625C9.28934 15.8913 9.07925 15.7562 8.90982 15.57C8.5 15.1198 8.5 14.2465 8.5 12.5C8.5 10.7535 8.5 9.88018 8.90982 9.42995C9.07925 9.24381 9.28934 9.10868 9.51993 9.03753C10.0777 8.86544 10.7697 9.29357 12.1539 10.1498C13.5857 11.0356 14.3016 11.4785 14.4531 12.1052C14.5156 12.3639 14.5156 12.6361 14.4531 12.8948Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M20.9977 11C21 11.4701 21 11.9693 21 12.5C21 16.9783 21 19.2175 19.6088 20.6088C18.2175 22 15.9783 22 11.5 22C7.02166 22 4.78249 22 3.39124 20.6088C2 19.2175 2 16.9783 2 12.5C2 8.02166 2 5.78249 3.39124 4.39124C4.78249 3 7.02166 3 11.5 3C12.0307 3 12.5299 3 13 3.00231" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M18.5 2L18.7579 2.69703C19.0961 3.61102 19.2652 4.06802 19.5986 4.40139C19.932 4.73477 20.389 4.90387 21.303 5.24208L22 5.5L21.303 5.75792C20.389 6.09613 19.932 6.26524 19.5986 6.59861C19.2652 6.93198 19.0961 7.38898 18.7579 8.30297L18.5 9L18.2421 8.30297C17.9039 7.38898 17.7348 6.93198 17.4014 6.59861C17.068 6.26524 16.611 6.09613 15.697 5.75792L15 5.5L15.697 5.24208C16.611 4.90387 17.068 4.73477 17.4014 4.40139C17.7348 4.06802 17.9039 3.61102 18.2421 2.69703L18.5 2Z" stroke="currentColor" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PreviewPauseIcon({ size = 24, className = '' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path d="M20.9977 11C21 11.4701 21 11.9693 21 12.5C21 16.9783 21 19.2175 19.6088 20.6088C18.2175 22 15.9783 22 11.5 22C7.02166 22 4.78249 22 3.39124 20.6088C2 19.2175 2 16.9783 2 12.5C2 8.02166 2 5.78249 3.39124 4.39124C4.78249 3 7.02166 3 11.5 3C12.0307 3 12.5299 3 13 3.00231" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M18.5 2L18.7579 2.69703C19.0961 3.61102 19.2652 4.06802 19.5986 4.40139C19.932 4.73477 20.389 4.90387 21.303 5.24208L22 5.5L21.303 5.75792C20.389 6.09613 19.932 6.26524 19.5986 6.59861C19.2652 6.93198 19.0961 7.38898 18.7579 8.30297L18.5 9L18.2421 8.30297C17.9039 7.38898 17.7348 6.93198 17.4014 6.59861C17.068 6.26524 16.611 6.09613 15.697 5.75792L15 5.5L15.697 5.24208C16.611 4.90387 17.068 4.73477 17.4014 4.40139C17.7348 4.06802 17.9039 3.61102 18.2421 2.69703L18.5 2Z" fill="currentColor" />
+      <rect x="8.5" y="9.5" width="2.5" height="6" rx="1.25" fill="currentColor" />
+      <rect x="12.5" y="9.5" width="2.5" height="6" rx="1.25" fill="currentColor" />
+    </svg>
   );
 }
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Check, Copy, ExternalLink, ShieldAlert, Timer, X } from 'lucide-react';
 import { vouchers } from '../data/vouchers';
+import { formatUsd } from '../utils/currency';
 import VoucherBrandMark from './VoucherBrandMark';
 
 export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
@@ -74,7 +75,7 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
                 <div className="flex items-center gap-4 mb-8">
                   <VoucherBrandMark brand={product.brand} logo={product.logo} size={64} radius={12} className="shadow-lg" />
                   <div>
-                    <h2 className="text-[18px] font-bold text-white mb-1">{product.product}</h2>
+                    <h2 className="text-[18px] font-bold text-white mb-1">{product.brand} {formatUsd(product.faceValue)} Voucher</h2>
                     <span className="text-[13px] text-white/60">Bought {new Date(voucherInstance.purchasedAt).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -95,7 +96,7 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
                         <span className="font-mono text-[18px] font-bold text-white tracking-widest">{voucherInstance.code}</span>
                         <button onClick={handleCopy} className="text-cyan cursor-pointer"><Copy size={20} /></button>
                       </div>
-                      <p className="text-[12px] text-white/60">Grants {product.grants} once redeemed.</p>
+                      <p className="text-[12px] text-white/60">Adds {formatUsd(product.faceValue)} to your {product.brand} account once redeemed.</p>
                     </div>
 
                     <button 
@@ -119,9 +120,9 @@ export default function OwnedVoucherDetailSheet({ voucherInstance, onClose }) {
                     </p>
                     
                     <div className="bg-black/20 rounded-[8px] p-4 text-left">
-                      <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider block mb-1">Package Validity</span>
-                      <span className="text-[16px] font-bold text-cyan block mb-1">{calculateDaysLeft(voucherInstance.packageExpiresAt)} days remaining</span>
-                      <span className="text-[13px] text-white/60">Ends {new Date(voucherInstance.packageExpiresAt).toLocaleDateString()}</span>
+                      <span className="text-[11px] font-bold text-white/40 uppercase tracking-wider block mb-1">Credit Applied</span>
+                      <span className="text-[16px] font-bold text-cyan block mb-1">{formatUsd(product.faceValue)} credit applied</span>
+                      <span className="text-[13px] text-white/60">On {new Date(voucherInstance.redeemedAt).toLocaleDateString()}</span>
                     </div>
 
                     <div className="mt-6 border-t border-white/10 pt-4 text-left">

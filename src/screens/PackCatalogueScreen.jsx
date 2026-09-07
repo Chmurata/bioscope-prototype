@@ -1,5 +1,5 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
-import { ArrowLeft, Crown } from 'lucide-react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { ArrowLeft, Crown, X } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { packs } from '../data/packs';
 import PackCard from '../components/PackCard';
@@ -18,11 +18,17 @@ const validityMap = {
 };
 
 export default function PackCatalogueScreen() {
-  const { goBack, setPaywallContext, activeCampaign } = useApp();
-  
+  const { goBack, setPaywallContext, activeCampaign, packCatalogueContent, setPackCatalogueContent } = useApp();
+
   const [selectedValidity, setSelectedValidity] = useState('All');
   const [selectedPlatform, setSelectedPlatform] = useState('All');
   const [showComparison, setShowComparison] = useState(false);
+
+  // Reuses the exact predicate PaywallSheet.jsx uses to scope packs to a title.
+  const matchesContent = useCallback(
+    (p) => !packCatalogueContent || packCatalogueContent.packs.includes(p.id),
+    [packCatalogueContent]
+  );
 
   // Filter logic
   const filteredPacks = useMemo(() => {
@@ -33,6 +39,8 @@ export default function PackCatalogueScreen() {
 
       // Exclude recommended pack from normal list, it will be hoisted
       if (p.recommended) return false;
+
+      if (!matchesContent(p)) return false;
 
       // Validity
       if (selectedValidity !== 'All' && p.durationDays !== validityMap[selectedValidity]) {
@@ -50,9 +58,9 @@ export default function PackCatalogueScreen() {
 
       return true;
     });
-  }, [selectedValidity, selectedPlatform]);
+  }, [selectedValidity, selectedPlatform, matchesContent]);
 
-  const recommendedPack = packs.find(p => p.recommended);
+  const recommendedPack = packs.find(p => p.recommended && matchesContent(p));
 
   // A campaign is set from outside this screen, so the pack it applies to can be
   // anywhere in the list. Bring it into view rather than making the user hunt.
@@ -88,6 +96,21 @@ export default function PackCatalogueScreen() {
         </button>
         <h1 className="text-[20px] font-bold text-white leading-tight tracking-tight">Select Your Pack</h1>
       </div>
+
+      {/* Content filter indicator — dismissible back to the unfiltered catalogue */}
+      {packCatalogueContent && (
+        <div className="shrink-0 px-5 pb-4 -mt-2">
+          <div className="inline-flex items-center gap-2 h-[28px] pl-3 pr-2 rounded-full bg-cyan/15 ring-1 ring-cyan/30">
+            <span className="text-[11px] font-bold text-cyan">Packs for {packCatalogueContent.title}</span>
+            <button
+              onClick={() => setPackCatalogueContent(null)}
+              className="w-[16px] h-[16px] rounded-full bg-cyan/20 flex items-center justify-center cursor-pointer"
+            >
+              <X size={10} className="text-cyan" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters (Sticky) */}
       <div className="shrink-0 bg-dark border-b border-white/10 pb-2">

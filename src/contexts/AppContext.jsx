@@ -54,6 +54,10 @@ export function AppProvider({ children }) {
   const [rentals, setRentals] = useState([]);
   const [carrierKnown, setCarrierKnown] = useState(true);
   const [orientation, setOrientation] = useState('portrait');
+  // Content filter carried into the pack catalogue when navigated to from a
+  // content-scoped Subscribe CTA (detail page or the post-clip paywall sheet).
+  // Cleared automatically whenever PACK_CATALOGUE is navigated to without one.
+  const [packCatalogueContent, setPackCatalogueContent] = useState(null);
   // Pending ad-streak request from the dev panel. PlayerScreen reads this
   // and kicks off the streak; it's cleared by consumeAdRequest() once handled.
   const [pendingAdRequest, setPendingAdRequest] = useState(null);
@@ -86,7 +90,10 @@ export function AppProvider({ children }) {
     setLiked((prev) => (prev[dramaId] ? prev : { ...prev, [dramaId]: true }));
   };
 
-  const navigate = (newScreen) => {
+  const navigate = (newScreen, payload) => {
+    if (newScreen === SCREENS.PACK_CATALOGUE) {
+      setPackCatalogueContent(payload?.content ?? null);
+    }
     setScreenHistory(prev => [...prev, newScreen]);
     setScreen(newScreen);
   };
@@ -183,6 +190,7 @@ export function AppProvider({ children }) {
     rentals, setRentals,
     carrierKnown, setCarrierKnown,
     orientation, setOrientation,
+    packCatalogueContent, setPackCatalogueContent,
     showSubscribe: setShowSubscribe,
     setShowSubscribe,
     pendingAdRequest, triggerAdStreak, consumeAdRequest,

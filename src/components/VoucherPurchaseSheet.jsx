@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, AlertCircle, Copy, ExternalLink, X } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { vouchers } from '../data/vouchers';
+import { formatUsd, formatBdt } from '../utils/currency';
 import VoucherBrandMark from './VoucherBrandMark';
 import PaymentMethodList from './PaymentMethodList';
 
@@ -30,14 +31,15 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
     setTimeout(() => {
       const code = `${voucher.brand.substring(0, 4).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}-VCHR`;
       setGeneratedCode(code);
-      
+
       const newOwned = {
-        instanceId: `v_new_${Date.now()}`,
+        id: `v_new_${Date.now()}`,
         productId: voucher.id,
-        code: code,
         state: 'unredeemed',
-        purchasedAt: Date.now(),
-        codeExpiresAt: Date.now() + (voucher.codeValidDays * 24 * 60 * 60 * 1000)
+        code: code,
+        purchasedAt: new Date().toISOString().slice(0, 10),
+        codeExpiresAt: new Date(Date.now() + (voucher.codeValidDays * 24 * 60 * 60 * 1000)).toISOString().slice(0, 10),
+        redeemedAt: null,
       };
       
       setOwnedVouchers([newOwned, ...ownedVouchers]);
@@ -80,8 +82,8 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
               </div>
               <div className="flex-1 overflow-y-auto px-4 pt-6 pb-6 text-center">
                 <VoucherBrandMark brand={voucher.brand} logo={voucher.logo} size={80} radius={16} className="mx-auto mb-4 shadow-lg" />
-                <h2 className="text-[24px] font-bold text-white mb-1">{voucher.product}</h2>
-                <p className="text-[14px] text-white/60 mb-8">Grants access to {voucher.brand} for {voucher.grants}</p>
+                <h2 className="text-[24px] font-bold text-white mb-1">{voucher.brand} {formatUsd(voucher.faceValue)} Voucher</h2>
+                <p className="text-[14px] text-white/60 mb-8">{formatUsd(voucher.faceValue)} of {voucher.brand} credit, applied when you redeem.</p>
                 
                 <div className="bg-surface-dark ring-1 ring-white/10 rounded-[12px] p-4 text-left space-y-4 mb-6">
                   <div>
@@ -98,7 +100,7 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
               <div className="shrink-0 bg-surface-alt p-4 flex items-center justify-between">
                 <div>
                   <span className="text-[13px] text-white/60 block mb-0.5">Price</span>
-                  <span className="text-[22px] font-bold text-white tabular-nums leading-none">৳{voucher.price}</span>
+                  <span className="text-[22px] font-bold text-white tabular-nums leading-none">{formatBdt(voucher.price)}</span>
                 </div>
                 <button 
                   onClick={() => setStage('disclosure')} 
@@ -178,9 +180,9 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
                   <VoucherBrandMark brand={voucher.brand} logo={voucher.logo} size={40} radius={10} />
                   <div className="flex-1 min-w-0">
                     <span className="text-[14px] font-bold text-white block">{voucher.brand}</span>
-                    <span className="text-[12px] text-white/60">{voucher.product}</span>
+                    <span className="text-[12px] text-white/60">{formatUsd(voucher.faceValue)} Voucher</span>
                   </div>
-                  <span className="text-[18px] font-bold text-white tabular-nums">৳{voucher.price}</span>
+                  <span className="text-[18px] font-bold text-white tabular-nums">{formatBdt(voucher.price)}</span>
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto px-4 pt-5 pb-6">
@@ -192,7 +194,7 @@ export default function VoucherPurchaseSheet({ voucherId, onClose }) {
               </div>
               <div className="shrink-0 bg-white p-4 border-t border-black/5">
                 <button onClick={handlePay} className="w-full h-[48px] bg-white ring-1 ring-black/20 rounded-[12px] flex items-center justify-center gap-2 cursor-pointer hover:bg-black/5">
-                  <span className="text-[15px] font-bold text-black">Pay ৳{voucher.price}</span>
+                  <span className="text-[15px] font-bold text-black">Pay {formatBdt(voucher.price)}</span>
                   <ArrowRight size={18} className="text-black" />
                 </button>
               </div>

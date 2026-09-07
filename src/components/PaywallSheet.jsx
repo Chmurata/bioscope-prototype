@@ -7,13 +7,6 @@ import PackCard from './PackCard';
 import PaymentMethodList from './PaymentMethodList';
 import { PAYMENT_PREVIEW } from '../data/paymentMethods';
 
-const FRAMING = {
-  'preview-end': "You've watched the free preview",
-  'trailer-end': "Trailer finished; the content is paywalled",
-  'locked-tap': "Unlock to start watching",
-  'generic': "Choose Your Plan"
-};
-
 export default function PaywallSheet({ origin, content, initialPackId, onClose }) {
   const { setSubscription, rentals, setRentals, setScreen, SCREENS, activeCampaign, carrierKnown } = useApp();
   const [stage, setStage] = useState('prompt'); // prompt, packs, rent-checkout, sub-checkout, payment, processing, success
@@ -90,13 +83,12 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
     .sort((a, b) => (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0))
     .slice(0, MAX_SHEET_PACKS);
 
+  // R1/R2: Subscribe from the post-clip prompt leaves the sheet entirely for
+  // the content-filtered pack catalogue, same destination as the detail page's
+  // top CTA — it no longer opens the in-sheet packs stage.
   const handleSubscribeClick = () => {
-    if (origin === 'generic') {
-      // Should route to M2 pack page, but for now we just show packs here
-      setStage('packs');
-    } else {
-      setStage('packs');
-    }
+    onClose();
+    setScreen(SCREENS.PACK_CATALOGUE, { content });
   };
 
   // Rent is offered inside the pack sheet, not on the paywall prompt.
@@ -234,33 +226,38 @@ export default function PaywallSheet({ origin, content, initialPackId, onClose }
           transition={{ type: 'spring', damping: 34, stiffness: 320 }}
         >
           
-          {/* 1. Initial Prompt */}
+          {/* 1. Initial Prompt — Subscribe and Rent as two peer buttons (R1); Rent
+              only renders when the title carries a rentPrice. */}
           {stage === 'prompt' && (
             <div className="p-5 flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="text-[14px] text-cyan font-semibold mb-1">{FRAMING[origin]}</p>
-                  <h2 className="text-[22px] font-bold text-white">{content?.title}</h2>
+                  <h2 className="text-[22px] font-bold text-white mb-1">Keep watching {content?.title}</h2>
+                  <p className="text-[13px] text-white/60 leading-[18px]">
+                    {origin === 'trailer-end' ? 'That was the trailer.' : 'That was a preview.'} Subscribe for unlimited access, or rent this title.
+                  </p>
                 </div>
-                <button onClick={onClose} className="p-1 cursor-pointer bg-white/10 rounded-full">
+                <button onClick={onClose} className="p-1 cursor-pointer bg-white/10 rounded-full shrink-0">
                   <X size={20} className="text-white" />
                 </button>
               </div>
 
               <div className="flex flex-col gap-3 mt-4">
-                <button 
+                <button
                   onClick={handleSubscribeClick}
                   className="w-full h-[52px] bg-[image:var(--gradient-subscribe)] rounded-[12px] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_14px_rgba(255,153,0,0.3)]"
                 >
                   <Crown size={20} className="text-black" strokeWidth={2.5} />
-                  <span className="text-[16px] font-bold text-black">Subscribe to Unlock</span>
+                  <span className="text-[16px] font-bold text-black">See subscription packs</span>
                 </button>
-              </div>
-              
-              <div className="mt-4 flex justify-center">
-                <button onClick={handleSubscribeClick} className="text-[13px] text-white/50 hover:text-white cursor-pointer transition-colors">
-                  See all packs
-                </button>
+                {content?.rentPrice != null && (
+                  <button
+                    onClick={handleRentClick}
+                    className="w-full h-[52px] bg-white/10 ring-1 ring-white/15 rounded-[12px] flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span className="text-[16px] font-bold text-white">Rent for ৳{content.rentPrice} · {content.rentHours}h</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
